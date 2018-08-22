@@ -7,7 +7,5 @@ import (
 
 func main() {
 	app := bootstrap.New(echo.New())
-	app.InitMiddleware()
-	app.InitRoutes()
-	app.Run(3000)
+	app.Run()
 }

@@ -7,10 +7,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/ramadani/go-api-skeleton/routes"
+	"github.com/spf13/viper"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 )
 
@@ -18,16 +17,18 @@ type App struct {
 	e *echo.Echo
 }
 
-func (app App) InitMiddleware() {
-	app.e.Use(middleware.Logger())
-	app.e.Use(middleware.Recover())
-}
+func (app App) Run() {
+	bootables := []Bootable{
+		NewConfigBoot(),
+		NewMiddlewareBoot(app),
+		NewRouteBoot(app),
+	}
 
-func (app App) InitRoutes() {
-	routes.NewApiRoutes(app.e)
-}
+	for _, bootable := range bootables {
+		bootable.Boot()
+	}
 
-func (app App) Run(port int) {
+	port := viper.GetInt("port")
 	app.e.Logger.SetLevel(log.INFO)
 
 	go func() {
