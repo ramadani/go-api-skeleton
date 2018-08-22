@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"github.com/labstack/echo/middleware"
+	"github.com/spf13/viper"
 )
 
 type Middleware struct {
@@ -9,7 +10,10 @@ type Middleware struct {
 }
 
 func (m Middleware) Boot() {
-	m.app.e.Use(middleware.Logger())
+	if viper.GetBool("debug") {
+		m.app.e.Use(middleware.Logger())
+	}
+
 	m.app.e.Use(middleware.Recover())
 }
 
