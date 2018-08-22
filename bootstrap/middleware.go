@@ -1,16 +1,18 @@
 package bootstrap
 
-import "github.com/labstack/echo/middleware"
+import (
+	"github.com/labstack/echo/middleware"
+)
 
-type MiddlewareBoot struct {
+type Middleware struct {
 	app App
 }
 
-func (b MiddlewareBoot) Boot() {
-	b.app.e.Use(middleware.Logger())
-	b.app.e.Use(middleware.Recover())
+func (m Middleware) Boot() {
+	m.app.e.Use(middleware.Logger())
+	m.app.e.Use(middleware.Recover())
 }
 
-func NewMiddlewareBoot(app App) *MiddlewareBoot {
-	return &MiddlewareBoot{app}
+func InitMiddleware(app App) *Middleware {
+	return &Middleware{app}
 }

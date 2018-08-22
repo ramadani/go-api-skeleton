@@ -19,9 +19,9 @@ type App struct {
 
 func (app App) Run() {
 	bootables := []Bootable{
-		NewConfigBoot(),
-		NewMiddlewareBoot(app),
-		NewRouteBoot(app),
+		InitConfig(),
+		InitMiddleware(app),
+		InitRoute(app),
 	}
 
 	for _, bootable := range bootables {

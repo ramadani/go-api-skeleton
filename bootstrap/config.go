@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConfigBoot struct{}
+type Config struct{}
 
-func (b ConfigBoot) Boot() {
+func (c Config) Boot() {
 	viper.SetConfigName("env")
 	viper.AddConfigPath(".")
 
@@ -18,6 +18,6 @@ func (b ConfigBoot) Boot() {
 	}
 }
 
-func NewConfigBoot() *ConfigBoot {
-	return &ConfigBoot{}
+func InitConfig() *Config {
+	return &Config{}
 }

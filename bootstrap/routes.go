@@ -1,15 +1,17 @@
 package bootstrap
 
-import "github.com/ramadani/go-api-skeleton/routes"
+import (
+	"github.com/ramadani/go-api-skeleton/routes"
+)
 
-type RouteBoot struct {
+type Route struct {
 	app App
 }
 
-func (b RouteBoot) Boot() {
+func (b Route) Boot() {
 	routes.NewApiRoutes(b.app.e)
 }
 
-func NewRouteBoot(app App) *RouteBoot {
-	return &RouteBoot{app}
+func InitRoute(app App) *Route {
+	return &Route{app}
 }
