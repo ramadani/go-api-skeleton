@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/spf13/viper"
 
 	"github.com/ramadani/go-api-skeleton/provider"
@@ -18,6 +20,7 @@ import (
 type App struct {
 	fw  *echo.Echo
 	cog *viper.Viper
+	db  *gorm.DB
 }
 
 func (app App) Run() {
@@ -51,6 +54,6 @@ func (app App) Run() {
 	}
 }
 
-func New(fw *echo.Echo, cog *viper.Viper) *App {
-	return &App{fw, cog}
+func New(fw *echo.Echo, cog *viper.Viper, db *gorm.DB) *App {
+	return &App{fw, cog, db}
 }
