@@ -7,21 +7,21 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/ramadani/go-api-skeleton/provider"
 	"github.com/spf13/viper"
+
+	"github.com/ramadani/go-api-skeleton/provider"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
 
 type App struct {
-	fw *echo.Echo
+	fw  *echo.Echo
+	cog *viper.Viper
 }
 
 func (app App) Run() {
 	bootables := []Bootable{
-		provider.InitConfig(),
-		// provider.InitDatabase(),
 		provider.InitMiddleware(app.fw),
 		provider.InitRoute(app.fw),
 	}
@@ -30,7 +30,7 @@ func (app App) Run() {
 		bootable.Boot()
 	}
 
-	port := viper.GetInt("port")
+	port := app.cog.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
@@ -51,6 +51,6 @@ func (app App) Run() {
 	}
 }
 
-func New(e *echo.Echo) *App {
-	return &App{e}
+func New(fw *echo.Echo, cog *viper.Viper) *App {
+	return &App{fw, cog}
 }
