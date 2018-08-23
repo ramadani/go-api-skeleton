@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/ramadani/go-api-skeleton/provider"
 	"github.com/spf13/viper"
 
 	"github.com/labstack/echo"
@@ -14,14 +15,15 @@ import (
 )
 
 type App struct {
-	e *echo.Echo
+	fw *echo.Echo
 }
 
 func (app App) Run() {
 	bootables := []Bootable{
-		InitConfig(),
-		InitMiddleware(app),
-		InitRoute(app),
+		provider.InitConfig(),
+		// provider.InitDatabase(),
+		provider.InitMiddleware(app.fw),
+		provider.InitRoute(app.fw),
 	}
 
 	for _, bootable := range bootables {
@@ -29,11 +31,11 @@ func (app App) Run() {
 	}
 
 	port := viper.GetInt("port")
-	app.e.Logger.SetLevel(log.INFO)
+	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
-		if err := app.e.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.e.Logger.Info("shutting down the server")
+		if err := app.fw.Start(fmt.Sprintf(":%d", port)); err != nil {
+			app.fw.Logger.Info("shutting down the server")
 		}
 	}()
 
@@ -44,8 +46,8 @@ func (app App) Run() {
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := app.e.Shutdown(ctx); err != nil {
-		app.e.Logger.Fatal(err)
+	if err := app.fw.Shutdown(ctx); err != nil {
+		app.fw.Logger.Fatal(err)
 	}
 }
 
