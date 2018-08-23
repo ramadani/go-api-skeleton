@@ -25,7 +25,7 @@ type App struct {
 
 func (app App) Run() {
 	bootables := []Bootable{
-		provider.InitMiddleware(app.fw),
+		provider.InitMiddleware(app.fw, app.cog),
 		provider.InitRoute(app.fw),
 	}
 

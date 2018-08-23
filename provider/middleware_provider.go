@@ -7,17 +7,18 @@ import (
 )
 
 type Middleware struct {
-	fw *echo.Echo
+	fw  *echo.Echo
+	cog *viper.Viper
 }
 
 func (md Middleware) Boot() {
-	if viper.GetBool("debug") {
+	if md.cog.GetBool("debug") {
 		md.fw.Use(middleware.Logger())
 	}
 
 	md.fw.Use(middleware.Recover())
 }
 
-func InitMiddleware(fw *echo.Echo) *Middleware {
-	return &Middleware{fw}
+func InitMiddleware(fw *echo.Echo, cog *viper.Viper) *Middleware {
+	return &Middleware{fw, cog}
 }
