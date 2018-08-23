@@ -7,33 +7,38 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/spf13/viper"
+
+	"github.com/ramadani/go-api-skeleton/provider"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
 
 type App struct {
-	e *echo.Echo
+	fw  *echo.Echo
+	cog *viper.Viper
+	db  *gorm.DB
 }
 
 func (app App) Run() {
 	bootables := []Bootable{
-		InitConfig(),
-		InitMiddleware(app),
-		InitRoute(app),
+		provider.InitMiddleware(app.fw, app.cog),
+		provider.InitRoute(app.fw),
 	}
 
 	for _, bootable := range bootables {
 		bootable.Boot()
 	}
 
-	port := viper.GetInt("port")
-	app.e.Logger.SetLevel(log.INFO)
+	port := app.cog.GetInt("port")
+	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
-		if err := app.e.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.e.Logger.Info("shutting down the server")
+		if err := app.fw.Start(fmt.Sprintf(":%d", port)); err != nil {
+			app.fw.Logger.Info("shutting down the server")
 		}
 	}()
 
@@ -44,11 +49,11 @@ func (app App) Run() {
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := app.e.Shutdown(ctx); err != nil {
-		app.e.Logger.Fatal(err)
+	if err := app.fw.Shutdown(ctx); err != nil {
+		app.fw.Logger.Fatal(err)
 	}
 }
 
-func New(e *echo.Echo) *App {
-	return &App{e}
+func New(fw *echo.Echo, cog *viper.Viper, db *gorm.DB) *App {
+	return &App{fw, cog, db}
 }

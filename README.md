@@ -6,3 +6,4 @@ Go Api Skeleton
 
 - [echo](https://github.com/labstack/echo)
 - [viper](https://github.com/spf13/viper)
+- [gorm](https://github.com/jinzhu/gorm)
