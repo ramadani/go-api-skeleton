@@ -8,10 +8,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/spf13/viper"
-
-	"github.com/ramadani/go-api-skeleton/provider"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
@@ -25,8 +24,9 @@ type App struct {
 
 func (app App) Run() {
 	bootables := []Bootable{
-		provider.InitMiddleware(app.fw, app.cog),
-		provider.InitRoute(app.fw),
+		providers.NewDbMigration(app.db),
+		providers.InitMiddleware(app.fw, app.cog),
+		providers.InitRoute(app.fw),
 	}
 
 	for _, bootable := range bootables {
@@ -41,6 +41,8 @@ func (app App) Run() {
 			app.fw.Logger.Info("shutting down the server")
 		}
 	}()
+
+	defer app.db.Close()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.

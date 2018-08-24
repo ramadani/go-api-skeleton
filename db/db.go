@@ -33,7 +33,5 @@ func Init(cog *viper.Viper) *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	defer db.Close()
-
 	return db
 }

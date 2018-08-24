@@ -1,8 +1,8 @@
-package provider
+package providers
 
 import (
 	"github.com/labstack/echo"
-	"github.com/ramadani/go-api-skeleton/route"
+	"github.com/ramadani/go-api-skeleton/routes"
 )
 
 type Route struct {
@@ -10,7 +10,7 @@ type Route struct {
 }
 
 func (r Route) Boot() {
-	route.ApiRoutes(r.fw)
+	routes.ApiRoutes(r.fw)
 }
 
 func InitRoute(fw *echo.Echo) *Route {
