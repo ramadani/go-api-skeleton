@@ -8,10 +8,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/spf13/viper"
-
-	"github.com/ramadani/go-api-skeleton/provider"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
@@ -25,8 +24,8 @@ type App struct {
 
 func (app App) Run() {
 	bootables := []Bootable{
-		provider.InitMiddleware(app.fw, app.cog),
-		provider.InitRoute(app.fw),
+		providers.InitMiddleware(app.fw, app.cog),
+		providers.InitRoute(app.fw),
 	}
 
 	for _, bootable := range bootables {
