@@ -24,6 +24,7 @@ type App struct {
 
 func (app App) Run() {
 	bootables := []Bootable{
+		providers.NewDbMigration(app.db),
 		providers.InitMiddleware(app.fw, app.cog),
 		providers.InitRoute(app.fw),
 	}
@@ -40,6 +41,8 @@ func (app App) Run() {
 			app.fw.Logger.Info("shutting down the server")
 		}
 	}()
+
+	defer app.db.Close()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.
