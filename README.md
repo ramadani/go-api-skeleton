@@ -1,13 +1,13 @@
 # go-api-skeleton
 
-Go Api Skeleton
+Go Api Skeleton (development)
 
-## Requirements
+## Requirement
 
 - [Go](https://golang.org/)
 - [dep](https://github.com/golang/dep)
 
-## Installations
+## Installation
 
 - Clone this repository
 - Run `dep ensure` to install the dependencies
