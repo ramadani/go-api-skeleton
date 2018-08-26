@@ -16,13 +16,15 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// App contains the libraries that can be used in the app.
 type App struct {
 	fw  *echo.Echo
 	cog *viper.Viper
 	db  *gorm.DB
 }
 
-func (app App) Run() {
+// Boot is to use execute the bootables code before their run.
+func (app App) Boot() {
 	bootables := []Bootable{
 		providers.NewDbMigration(app.db),
 		providers.InitMiddleware(app.fw, app.cog),
@@ -32,7 +34,10 @@ func (app App) Run() {
 	for _, bootable := range bootables {
 		bootable.Boot()
 	}
+}
 
+// Run and serve the app.
+func (app App) Run() {
 	port := app.cog.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
@@ -56,6 +61,7 @@ func (app App) Run() {
 	}
 }
 
+// New returns app.
 func New(fw *echo.Echo, cog *viper.Viper, db *gorm.DB) *App {
 	return &App{fw, cog, db}
 }

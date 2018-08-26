@@ -13,5 +13,6 @@ func main() {
 	db := db.Init(cog)
 
 	app := bootstrap.New(fw, cog, db)
+	app.Boot()
 	app.Run()
 }

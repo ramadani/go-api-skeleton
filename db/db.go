@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"  // mysql dialect
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // sqlite dialect
 
 	"github.com/spf13/viper"
 )
 
+// Init the database connection and returns db.
 func Init(cog *viper.Viper) *gorm.DB {
 	driver := cog.GetString("db.driver")
 

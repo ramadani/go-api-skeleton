@@ -5,7 +5,8 @@ import (
 	"github.com/ramadani/go-api-skeleton/http/handlers"
 )
 
-func ApiRoutes(fw *echo.Echo) {
+// APIRoutes is method to register the routes and thier handlers.
+func APIRoutes(fw *echo.Echo) {
 	welcome := handlers.NewWelcomeHandler()
 
 	fw.GET("/", welcome.Index)
