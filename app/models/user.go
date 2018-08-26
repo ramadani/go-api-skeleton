@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// User is the model for user's table.
 type User struct {
 	ID        uint   `gorm:"primary_key"`
 	Name      string `gorm:"not null"`

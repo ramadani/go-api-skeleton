@@ -1,18 +1,21 @@
 package providers
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/ramadani/go-api-skeleton/app/models"
+	"github.com/ramadani/go-api-skeleton/db"
 )
 
+// DbMigration contains db instance.
 type DbMigration struct {
-	db *gorm.DB
+	db *db.Database
 }
 
+// Boot the db migration.
 func (dbm DbMigration) Boot() {
-	dbm.db.AutoMigrate(&models.User{})
+	dbm.db.DB.AutoMigrate(&models.User{})
 }
 
-func NewDbMigration(db *gorm.DB) *DbMigration {
+// NewDbMigration returns db migration.
+func NewDbMigration(db *db.Database) *DbMigration {
 	return &DbMigration{db}
 }

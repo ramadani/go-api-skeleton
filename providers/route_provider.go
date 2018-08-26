@@ -5,14 +5,17 @@ import (
 	"github.com/ramadani/go-api-skeleton/routes"
 )
 
+// Route contains the library of framework.
 type Route struct {
 	fw *echo.Echo
 }
 
+// Boot the route.
 func (r Route) Boot() {
-	routes.ApiRoutes(r.fw)
+	routes.APIRoutes(r.fw)
 }
 
+// InitRoute returns route.
 func InitRoute(fw *echo.Echo) *Route {
 	return &Route{fw}
 }

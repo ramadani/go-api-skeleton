@@ -7,22 +7,23 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"github.com/ramadani/go-api-skeleton/config"
+	"github.com/ramadani/go-api-skeleton/db"
 	"github.com/ramadani/go-api-skeleton/providers"
-
-	"github.com/spf13/viper"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
 
+// App contains the libraries that can be used in the app.
 type App struct {
 	fw  *echo.Echo
-	cog *viper.Viper
-	db  *gorm.DB
+	cog *config.Config
+	db  *db.Database
 }
 
-func (app App) Run() {
+// Boot is to use execute the bootables code before their run.
+func (app App) Boot() {
 	bootables := []Bootable{
 		providers.NewDbMigration(app.db),
 		providers.InitMiddleware(app.fw, app.cog),
@@ -32,8 +33,11 @@ func (app App) Run() {
 	for _, bootable := range bootables {
 		bootable.Boot()
 	}
+}
 
-	port := app.cog.GetInt("port")
+// Run and serve the app.
+func (app App) Run() {
+	port := app.cog.Config.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
@@ -42,7 +46,7 @@ func (app App) Run() {
 		}
 	}()
 
-	defer app.db.Close()
+	defer app.db.DB.Close()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.
@@ -56,6 +60,7 @@ func (app App) Run() {
 	}
 }
 
-func New(fw *echo.Echo, cog *viper.Viper, db *gorm.DB) *App {
+// New returns app.
+func New(fw *echo.Echo, cog *config.Config, db *db.Database) *App {
 	return &App{fw, cog, db}
 }
