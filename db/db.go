@@ -10,8 +10,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Database contains db.
+type Database struct {
+	DB *gorm.DB
+}
+
 // Init the database connection and returns db.
-func Init(cog *viper.Viper) *gorm.DB {
+func Init(cog *viper.Viper) *Database {
 	driver := cog.GetString("db.driver")
 
 	var connection string
@@ -22,8 +27,8 @@ func Init(cog *viper.Viper) *gorm.DB {
 		port := cog.GetString("mysql.port")
 		user := cog.GetString("mysql.user")
 		pass := cog.GetString("mysql.password")
-		dbname := cog.GetString("mysql.dbname")
-		connection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", user, pass, host, port, dbname)
+		dbName := cog.GetString("mysql.dbname")
+		connection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", user, pass, host, port, dbName)
 	default:
 		connection = cog.GetString("sqlite3.db")
 	}
@@ -34,5 +39,5 @@ func Init(cog *viper.Viper) *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	return db
+	return &Database{db}
 }

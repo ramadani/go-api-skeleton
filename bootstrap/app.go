@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"github.com/ramadani/go-api-skeleton/db"
 	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/spf13/viper"
@@ -20,7 +20,7 @@ import (
 type App struct {
 	fw  *echo.Echo
 	cog *viper.Viper
-	db  *gorm.DB
+	db  *db.Database
 }
 
 // Boot is to use execute the bootables code before their run.
@@ -47,7 +47,7 @@ func (app App) Run() {
 		}
 	}()
 
-	defer app.db.Close()
+	defer app.db.DB.Close()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.
@@ -62,6 +62,6 @@ func (app App) Run() {
 }
 
 // New returns app.
-func New(fw *echo.Echo, cog *viper.Viper, db *gorm.DB) *App {
+func New(fw *echo.Echo, cog *viper.Viper, db *db.Database) *App {
 	return &App{fw, cog, db}
 }
