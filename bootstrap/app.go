@@ -7,10 +7,9 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/db"
 	"github.com/ramadani/go-api-skeleton/providers"
-
-	"github.com/spf13/viper"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
@@ -19,7 +18,7 @@ import (
 // App contains the libraries that can be used in the app.
 type App struct {
 	fw  *echo.Echo
-	cog *viper.Viper
+	cog *config.Config
 	db  *db.Database
 }
 
@@ -38,7 +37,7 @@ func (app App) Boot() {
 
 // Run and serve the app.
 func (app App) Run() {
-	port := app.cog.GetInt("port")
+	port := app.cog.Config.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
@@ -62,6 +61,6 @@ func (app App) Run() {
 }
 
 // New returns app.
-func New(fw *echo.Echo, cog *viper.Viper, db *db.Database) *App {
+func New(fw *echo.Echo, cog *config.Config, db *db.Database) *App {
 	return &App{fw, cog, db}
 }

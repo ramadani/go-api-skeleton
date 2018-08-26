@@ -3,34 +3,34 @@ package db
 import (
 	"fmt"
 
+	"github.com/ramadani/go-api-skeleton/config"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"  // mysql dialect
 	_ "github.com/jinzhu/gorm/dialects/sqlite" // sqlite dialect
-
-	"github.com/spf13/viper"
 )
 
-// Database contains db.
+// Database contains db library.
 type Database struct {
 	DB *gorm.DB
 }
 
 // Init the database connection and returns db.
-func Init(cog *viper.Viper) *Database {
-	driver := cog.GetString("db.driver")
+func Init(cog *config.Config) *Database {
+	driver := cog.Config.GetString("db.driver")
 
 	var connection string
 
 	switch driver {
 	case "mysql":
-		host := cog.GetString("mysql.host")
-		port := cog.GetString("mysql.port")
-		user := cog.GetString("mysql.user")
-		pass := cog.GetString("mysql.password")
-		dbName := cog.GetString("mysql.dbname")
+		host := cog.Config.GetString("mysql.host")
+		port := cog.Config.GetString("mysql.port")
+		user := cog.Config.GetString("mysql.user")
+		pass := cog.Config.GetString("mysql.password")
+		dbName := cog.Config.GetString("mysql.dbname")
 		connection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", user, pass, host, port, dbName)
 	default:
-		connection = cog.GetString("sqlite3.db")
+		connection = cog.Config.GetString("sqlite3.db")
 	}
 
 	db, err := gorm.Open(driver, connection)

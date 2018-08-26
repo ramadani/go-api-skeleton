@@ -6,8 +6,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config contains library for configuration.
+type Config struct {
+	Config *viper.Viper
+}
+
 // Init the configuration using viper and returns viper.
-func Init() *viper.Viper {
+func Init() *Config {
 	vp := viper.New()
 	vp.SetConfigName("env")
 	vp.AddConfigPath(".")
@@ -17,5 +22,5 @@ func Init() *viper.Viper {
 		panic(fmt.Errorf("Fatal error config file: %s", err))
 	}
 
-	return vp
+	return &Config{vp}
 }
