@@ -3,7 +3,7 @@ package todo
 import "github.com/ramadani/go-api-skeleton/app/todo/data"
 
 type UseCase interface {
-	All() []data.TodoData
+	All() []data.Todo
 	// Create()
 	// Find(id uint)
 	// Update(id uint)
