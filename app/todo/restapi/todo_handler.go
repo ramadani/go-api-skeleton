@@ -16,6 +16,10 @@ func (h *TodoHandler) Index(c echo.Context) error {
 	return c.JSON(http.StatusOK, h.uc.All())
 }
 
+func (h *TodoHandler) Create(c echo.Context) error {
+	return c.JSON(http.StatusOK, h.uc.Create())
+}
+
 func NewTodoHandler(uc todo.UseCase) *TodoHandler {
 	return &TodoHandler{uc}
 }

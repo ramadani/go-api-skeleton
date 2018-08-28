@@ -14,4 +14,5 @@ func TodoRoutes(fw *echo.Echo, md *middleware.Middleware) {
 	todoHandler := NewTodoHandler(todoUseCase)
 
 	fw.GET("/todo", todoHandler.Index)
+	fw.POST("/todo", todoHandler.Create)
 }

@@ -1,22 +1,36 @@
 package repository
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/ramadani/go-api-skeleton/app/todo/data"
 )
 
-type DummyTodoRepo struct{}
+type DummyTodoRepo struct {
+	todos []data.Todo
+}
 
 func (rp *DummyTodoRepo) All() []data.Todo {
-	todos := []data.Todo{}
-	todos = append(todos, data.Todo{1, "Great 1", "Great Body 1", time.Now().Format(time.RFC3339)})
-	todos = append(todos, data.Todo{2, "Great 2", "Great Body 2", time.Now().Format(time.RFC3339)})
-	todos = append(todos, data.Todo{3, "Great 3", "Great Body 3", time.Now().Format(time.RFC3339)})
+	return rp.todos
+}
 
-	return todos
+func (rp *DummyTodoRepo) Create() data.Todo {
+	todos := rp.todos
+	id := uint(len(todos) + 1)
+	todo := data.Todo{id, "Great Gan", "Great Gan Body", time.Now().Format(time.RFC3339)}
+	todos = append(todos, todo)
+	rp.todos = todos
+
+	return todo
 }
 
 func NewDummyTodoRepo() *DummyTodoRepo {
-	return &DummyTodoRepo{}
+	todos := []data.Todo{}
+	for i := 1; i <= 5; i++ {
+		title := fmt.Sprintf("Great %d", i)
+		body := fmt.Sprintf("Great Body %d", i)
+		todos = append(todos, data.Todo{uint(i), title, body, time.Now().Format(time.RFC3339)})
+	}
+	return &DummyTodoRepo{todos}
 }

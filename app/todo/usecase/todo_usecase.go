@@ -14,6 +14,10 @@ func (uc *TodoUseCase) All() []data.Todo {
 	return uc.rp.All()
 }
 
+func (uc *TodoUseCase) Create() data.Todo {
+	return uc.rp.Create()
+}
+
 func NewTodoUseCase(rp todo.Repository) *TodoUseCase {
 	return &TodoUseCase{rp}
 }
