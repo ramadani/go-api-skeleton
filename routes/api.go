@@ -11,8 +11,8 @@ import (
 func APIRoutes(fw *echo.Echo) {
 	welcomeHandler := handlers.NewWelcomeHandler()
 
-	todoRepoDummy := repository.NewTodoRepositoryDummy()
-	todoUseCase := usecase.NewTodoUseCase(todoRepoDummy)
+	todoRepo := repository.NewDummyTodoRepo()
+	todoUseCase := usecase.NewTodoUseCase(todoRepo)
 	todoHandler := handlers.NewTodoHandler(todoUseCase)
 
 	fw.GET("/", welcomeHandler.Index)
