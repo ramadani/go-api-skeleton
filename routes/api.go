@@ -9,12 +9,9 @@ import (
 
 // APIRoutes is method to register the routes and thier handlers.
 func APIRoutes(fw *echo.Echo) {
-	welcomeHandler := handlers.NewWelcomeHandler()
-
 	todoRepo := repository.NewDummyTodoRepo()
 	todoUseCase := usecase.NewTodoUseCase(todoRepo)
 	todoHandler := handlers.NewTodoHandler(todoUseCase)
 
-	fw.GET("/", welcomeHandler.Index)
 	fw.GET("/todo", todoHandler.Index)
 }

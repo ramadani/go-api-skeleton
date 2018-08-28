@@ -9,6 +9,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/db"
+	"github.com/ramadani/go-api-skeleton/middleware"
 	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/labstack/echo"
@@ -20,14 +21,14 @@ type App struct {
 	fw  *echo.Echo
 	cog *config.Config
 	db  *db.Database
+	md  *middleware.Middleware
 }
 
 // Boot is to use execute the bootables code before their run.
 func (app *App) Boot() {
 	bootables := []Bootable{
 		providers.NewDbMigration(app.db),
-		providers.InitMiddleware(app.fw, app.cog),
-		providers.InitRoute(app.fw),
+		providers.InitHTTP(app.fw, app.cog, app.md),
 	}
 
 	for _, bootable := range bootables {
@@ -61,6 +62,11 @@ func (app *App) Run() {
 }
 
 // New returns app.
-func New(fw *echo.Echo, cog *config.Config, db *db.Database) *App {
-	return &App{fw, cog, db}
+func New(
+	fw *echo.Echo,
+	cog *config.Config,
+	db *db.Database,
+	md *middleware.Middleware,
+) *App {
+	return &App{fw, cog, db, md}
 }
