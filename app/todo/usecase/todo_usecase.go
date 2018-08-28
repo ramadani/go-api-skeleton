@@ -10,8 +10,8 @@ type TodoUseCase struct {
 	rp todo.Repository
 }
 
-func (td TodoUseCase) All() []data.Todo {
-	return td.rp.All()
+func (uc *TodoUseCase) All() []data.Todo {
+	return uc.rp.All()
 }
 
 func NewTodoUseCase(rp todo.Repository) *TodoUseCase {

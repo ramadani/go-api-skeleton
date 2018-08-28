@@ -11,7 +11,7 @@ type DbMigration struct {
 }
 
 // Boot the db migration.
-func (dbm DbMigration) Boot() {
+func (dbm *DbMigration) Boot() {
 	dbm.db.DB.AutoMigrate(
 		&models.User{},
 		&models.Todo{},

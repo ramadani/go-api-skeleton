@@ -10,7 +10,7 @@ import (
 type WelcomeHandler struct{}
 
 // Index return the welcome index's response.
-func (h WelcomeHandler) Index(c echo.Context) error {
+func (h *WelcomeHandler) Index(c echo.Context) error {
 	return c.String(http.StatusOK, "Welcome Great Developer")
 }
 

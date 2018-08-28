@@ -11,7 +11,7 @@ type Route struct {
 }
 
 // Boot the route.
-func (r Route) Boot() {
+func (r *Route) Boot() {
 	routes.APIRoutes(r.fw)
 }
 

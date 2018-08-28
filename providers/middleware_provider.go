@@ -13,7 +13,7 @@ type Middleware struct {
 }
 
 // Boot the middlewares when starting the app.
-func (md Middleware) Boot() {
+func (md *Middleware) Boot() {
 	if md.cog.Config.GetBool("debug") {
 		md.fw.Use(middleware.Logger())
 	}

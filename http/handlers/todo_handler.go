@@ -12,7 +12,7 @@ type TodoHandler struct {
 	uc todo.UseCase
 }
 
-func (h TodoHandler) Index(c echo.Context) error {
+func (h *TodoHandler) Index(c echo.Context) error {
 	return c.JSON(http.StatusOK, h.uc.All())
 }
 

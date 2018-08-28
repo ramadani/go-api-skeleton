@@ -23,7 +23,7 @@ type App struct {
 }
 
 // Boot is to use execute the bootables code before their run.
-func (app App) Boot() {
+func (app *App) Boot() {
 	bootables := []Bootable{
 		providers.NewDbMigration(app.db),
 		providers.InitMiddleware(app.fw, app.cog),
@@ -36,7 +36,7 @@ func (app App) Boot() {
 }
 
 // Run and serve the app.
-func (app App) Run() {
+func (app *App) Run() {
 	port := app.cog.Config.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
