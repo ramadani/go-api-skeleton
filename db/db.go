@@ -15,6 +15,11 @@ type Database struct {
 	DB *gorm.DB
 }
 
+// Close the connection
+func (db *Database) Close() error {
+	return db.DB.Close()
+}
+
 // Init the database connection and returns db.
 func Init(cog *config.Config) *Database {
 	driver := cog.Config.GetString("db.driver")
