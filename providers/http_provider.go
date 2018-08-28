@@ -27,7 +27,7 @@ func (p *HTTP) Boot() {
 		return c.String(http.StatusOK, "Welcome Great Developer")
 	})
 
-	routes.APIRoutes(p.fw)
+	routes.APIRoutes(p.fw, p.md)
 }
 
 // InitHTTP returns route.

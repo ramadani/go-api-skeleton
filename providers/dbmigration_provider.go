@@ -1,8 +1,8 @@
 package providers
 
 import (
-	"github.com/ramadani/go-api-skeleton/app/models"
 	"github.com/ramadani/go-api-skeleton/db"
+	"github.com/ramadani/go-api-skeleton/models"
 )
 
 // DbMigration contains db instance.
@@ -11,8 +11,8 @@ type DbMigration struct {
 }
 
 // Boot the db migration.
-func (dbm *DbMigration) Boot() {
-	dbm.db.DB.AutoMigrate(
+func (p *DbMigration) Boot() {
+	p.db.DB.AutoMigrate(
 		&models.User{},
 		&models.Todo{},
 	)

@@ -1,4 +1,4 @@
-package handlers
+package restapi
 
 import (
 	"net/http"
