@@ -9,15 +9,15 @@ import (
 	"github.com/ramadani/go-api-skeleton/routes"
 )
 
-// HTTP contains the library of framework.
-type HTTP struct {
+// HTTPProvider contains the library of framework.
+type HTTPProvider struct {
 	fw  *echo.Echo
 	cog *config.Config
 	md  *middleware.Middleware
 }
 
 // Boot the http.
-func (p *HTTP) Boot() {
+func (p *HTTPProvider) Boot() {
 	if p.cog.Config.GetBool("debug") {
 		p.fw.Use(p.md.Logger())
 	}
@@ -31,6 +31,6 @@ func (p *HTTP) Boot() {
 }
 
 // InitHTTP returns route.
-func InitHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTP {
-	return &HTTP{fw, cog, md}
+func InitHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
+	return &HTTPProvider{fw, cog, md}
 }

@@ -5,13 +5,13 @@ import (
 	"github.com/ramadani/go-api-skeleton/models"
 )
 
-// DbMigration contains db instance.
-type DbMigration struct {
+// DbMigrationProvider contains db instance.
+type DbMigrationProvider struct {
 	db *db.Database
 }
 
 // Boot the db migration.
-func (p *DbMigration) Boot() {
+func (p *DbMigrationProvider) Boot() {
 	p.db.DB.AutoMigrate(
 		&models.User{},
 		&models.Todo{},
@@ -19,6 +19,6 @@ func (p *DbMigration) Boot() {
 }
 
 // NewDbMigration returns db migration.
-func NewDbMigration(db *db.Database) *DbMigration {
-	return &DbMigration{db}
+func NewDbMigration(db *db.Database) *DbMigrationProvider {
+	return &DbMigrationProvider{db}
 }
