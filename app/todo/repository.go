@@ -1,12 +1,14 @@
 package todo
 
-import "github.com/ramadani/go-api-skeleton/app/todo/data"
+import (
+	"github.com/ramadani/go-api-skeleton/app/todo/data"
+)
 
 // Repository interface for concrete repository
 type Repository interface {
 	All() []data.Todo
-	Create() data.Todo
-	// Find(id uint)
-	// Update(id uint)
-	// Delete(id uint)
+	Create(title, body string) data.Todo
+	Find(id uint) data.Todo
+	Update(title, body string, id uint) data.Todo
+	Delete(id uint) bool
 }

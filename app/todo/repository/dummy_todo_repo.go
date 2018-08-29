@@ -15,14 +15,33 @@ func (rp *DummyTodoRepo) All() []data.Todo {
 	return rp.todos
 }
 
-func (rp *DummyTodoRepo) Create() data.Todo {
+func (rp *DummyTodoRepo) Create(title, body string) data.Todo {
 	todos := rp.todos
 	id := uint(len(todos) + 1)
-	todo := data.Todo{id, "Great Gan", "Great Gan Body", time.Now().Format(time.RFC3339)}
+	todo := data.Todo{id, title, body, time.Now().Format(time.RFC3339)}
 	todos = append(todos, todo)
 	rp.todos = todos
 
 	return todo
+}
+
+func (rp *DummyTodoRepo) Find(id uint) data.Todo {
+	return rp.todos[id-1]
+}
+
+func (rp *DummyTodoRepo) Update(title, body string, id uint) data.Todo {
+	todo := rp.Find(id)
+	todo.Title = title
+	todo.Body = body
+	rp.todos[id-1] = todo
+
+	return todo
+}
+
+func (rp *DummyTodoRepo) Delete(id uint) bool {
+	rp.todos = append(rp.todos[:(id-1)], rp.todos[(id-1)+1:]...)
+
+	return true
 }
 
 func NewDummyTodoRepo() *DummyTodoRepo {

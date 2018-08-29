@@ -15,4 +15,7 @@ func TodoRoutes(fw *echo.Echo, md *middleware.Middleware) {
 
 	fw.GET("/todo", todoHandler.Index)
 	fw.POST("/todo", todoHandler.Create)
+	fw.GET("/todo/:id", todoHandler.Find)
+	fw.PUT("/todo/:id", todoHandler.Update)
+	fw.DELETE("/todo/:id", todoHandler.Delete)
 }
