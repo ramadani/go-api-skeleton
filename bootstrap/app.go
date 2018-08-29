@@ -9,6 +9,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/db"
+	"github.com/ramadani/go-api-skeleton/middleware"
 	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/labstack/echo"
@@ -20,15 +21,18 @@ type App struct {
 	fw  *echo.Echo
 	cog *config.Config
 	db  *db.Database
+	md  *middleware.Middleware
 }
 
 // Boot is to use execute the bootables code before their run.
-func (app App) Boot() {
-	bootables := []Bootable{
-		providers.NewDbMigration(app.db),
-		providers.InitMiddleware(app.fw, app.cog),
-		providers.InitRoute(app.fw),
+func (app *App) Boot() {
+	bootables := []Bootable{}
+
+	if app.cog.Config.GetBool("db.auto_migration") {
+		bootables = append(bootables, providers.NewDbMigration(app.db))
 	}
+
+	bootables = append(bootables, providers.NewHTTP(app.fw, app.cog, app.md))
 
 	for _, bootable := range bootables {
 		bootable.Boot()
@@ -36,17 +40,17 @@ func (app App) Boot() {
 }
 
 // Run and serve the app.
-func (app App) Run() {
+func (app *App) Run() {
 	port := app.cog.Config.GetInt("port")
 	app.fw.Logger.SetLevel(log.INFO)
 
 	go func() {
 		if err := app.fw.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.fw.Logger.Info("shutting down the server")
+			app.fw.Logger.Info("Shutting down the server")
 		}
 	}()
 
-	defer app.db.DB.Close()
+	defer app.db.Close()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.
@@ -61,6 +65,11 @@ func (app App) Run() {
 }
 
 // New returns app.
-func New(fw *echo.Echo, cog *config.Config, db *db.Database) *App {
-	return &App{fw, cog, db}
+func New(
+	fw *echo.Echo,
+	cog *config.Config,
+	db *db.Database,
+	md *middleware.Middleware,
+) *App {
+	return &App{fw, cog, db, md}
 }

@@ -1,13 +1,10 @@
 package routes
 
 import (
-	"github.com/labstack/echo"
-	"github.com/ramadani/go-api-skeleton/http/handlers"
+	todoRestAPI "github.com/ramadani/go-api-skeleton/app/todo/restapi"
 )
 
-// APIRoutes is method to register the routes and thier handlers.
-func APIRoutes(fw *echo.Echo) {
-	welcome := handlers.NewWelcomeHandler()
-
-	fw.GET("/", welcome.Index)
+// API routes
+func (r *Route) API() {
+	todoRestAPI.TodoRoutes(r.fw, r.md)
 }
