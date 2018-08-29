@@ -1,8 +1,6 @@
 package providers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo"
 	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/middleware"
@@ -23,11 +21,9 @@ func (p *HTTPProvider) Boot() {
 	}
 	p.fw.Use(p.md.Recover())
 
-	p.fw.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Welcome Great Developer")
-	})
-
-	routes.APIRoutes(p.fw, p.md)
+	routes := routes.New(p.fw, p.md)
+	routes.Web()
+	routes.API()
 }
 
 // NewHTTP returns route.
