@@ -30,7 +30,7 @@ func (p *HTTPProvider) Boot() {
 	routes.APIRoutes(p.fw, p.md)
 }
 
-// InitHTTP returns route.
-func InitHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
+// NewHTTP returns route.
+func NewHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
 	return &HTTPProvider{fw, cog, md}
 }

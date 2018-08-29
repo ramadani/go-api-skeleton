@@ -26,10 +26,13 @@ type App struct {
 
 // Boot is to use execute the bootables code before their run.
 func (app *App) Boot() {
-	bootables := []Bootable{
-		providers.NewDbMigration(app.db),
-		providers.InitHTTP(app.fw, app.cog, app.md),
+	bootables := []Bootable{}
+
+	if app.cog.Config.GetBool("db.auto_migration") {
+		bootables = append(bootables, providers.NewDbMigration(app.db))
 	}
+
+	bootables = append(bootables, providers.NewHTTP(app.fw, app.cog, app.md))
 
 	for _, bootable := range bootables {
 		bootable.Boot()
@@ -43,7 +46,7 @@ func (app *App) Run() {
 
 	go func() {
 		if err := app.fw.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.fw.Logger.Info("shutting down the server")
+			app.fw.Logger.Info("Shutting down the server")
 		}
 	}()
 
