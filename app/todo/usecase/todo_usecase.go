@@ -35,6 +35,6 @@ func (uc *TodoUseCase) Delete(id uint) response.Message {
 	return response.Message{"Failed"}
 }
 
-func NewTodoUseCase(rp todo.Repository) *TodoUseCase {
+func NewUseCase(rp todo.Repository) *TodoUseCase {
 	return &TodoUseCase{rp}
 }
