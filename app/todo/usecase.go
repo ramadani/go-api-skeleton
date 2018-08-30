@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"github.com/ramadani/go-api-skeleton/app/shared/response"
+	"github.com/ramadani/go-api-skeleton/app/commons/response"
 	"github.com/ramadani/go-api-skeleton/app/todo/data"
 )
 
