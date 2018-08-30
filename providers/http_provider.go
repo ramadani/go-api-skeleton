@@ -9,7 +9,7 @@ import (
 
 // HTTPProvider contains the library of framework.
 type HTTPProvider struct {
-	fw  *echo.Echo
+	e   *echo.Echo
 	cog *config.Config
 	md  *middleware.Middleware
 }
@@ -17,16 +17,16 @@ type HTTPProvider struct {
 // Boot the http.
 func (p *HTTPProvider) Boot() {
 	if p.cog.Config.GetBool("debug") {
-		p.fw.Use(p.md.Logger())
+		p.e.Use(p.md.Logger())
 	}
-	p.fw.Use(p.md.Recover())
+	p.e.Use(p.md.Recover())
 
-	routes := routes.New(p.fw, p.md)
+	routes := routes.New(p.e, p.md)
 	routes.Web()
 	routes.API()
 }
 
 // NewHTTP returns route.
-func NewHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
-	return &HTTPProvider{fw, cog, md}
+func NewHTTP(e *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
+	return &HTTPProvider{e, cog, md}
 }

@@ -32,7 +32,7 @@ func Init(cog *config.Config) *Database {
 		port := cog.Config.GetString("mysql.port")
 		user := cog.Config.GetString("mysql.user")
 		pass := cog.Config.GetString("mysql.password")
-		dbName := cog.Config.GetString("mysql.dbname")
+		dbName := cog.Config.GetString("mysql.db_name")
 		connection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", user, pass, host, port, dbName)
 	default:
 		connection = cog.Config.GetString("sqlite3.db")

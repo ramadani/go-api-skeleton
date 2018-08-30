@@ -9,12 +9,11 @@ import (
 )
 
 func main() {
-	fw := echo.New()
+	e := echo.New()
 	cog := config.Init()
 	db := db.Init(cog)
 	md := middleware.Init()
 
-	app := bootstrap.New(fw, cog, db, md)
-	app.Boot()
+	app := bootstrap.New(e, cog, db, md)
 	app.Run()
 }

@@ -6,5 +6,5 @@ import (
 
 // API routes
 func (r *Route) API() {
-	todoRestAPI.TodoRoutes(r.fw, r.md)
+	todoRestAPI.TodoRoutes(r.e, r.md)
 }
