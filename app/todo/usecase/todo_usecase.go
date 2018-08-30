@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/ramadani/go-api-skeleton/app/shared/response"
+	"github.com/ramadani/go-api-skeleton/app/commons/response"
 	"github.com/ramadani/go-api-skeleton/app/todo"
 
 	"github.com/ramadani/go-api-skeleton/app/todo/data"
@@ -35,6 +35,6 @@ func (uc *TodoUseCase) Delete(id uint) response.Message {
 	return response.Message{"Failed"}
 }
 
-func NewTodoUseCase(rp todo.Repository) *TodoUseCase {
+func NewUseCase(rp todo.Repository) *TodoUseCase {
 	return &TodoUseCase{rp}
 }

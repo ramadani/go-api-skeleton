@@ -44,7 +44,7 @@ func (rp *DummyTodoRepo) Delete(id uint) bool {
 	return true
 }
 
-func NewDummyTodoRepo() *DummyTodoRepo {
+func NewDummyRepo() *DummyTodoRepo {
 	todos := []data.Todo{}
 	for i := 1; i <= 5; i++ {
 		title := fmt.Sprintf("Great %d", i)

@@ -1,32 +1,39 @@
 package providers
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo"
 	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/middleware"
-	"github.com/ramadani/go-api-skeleton/routes"
 )
 
 // HTTPProvider contains the library of framework.
 type HTTPProvider struct {
-	fw  *echo.Echo
+	e   *echo.Echo
 	cog *config.Config
 	md  *middleware.Middleware
 }
 
 // Boot the http.
-func (p *HTTPProvider) Boot() {
-	if p.cog.Config.GetBool("debug") {
-		p.fw.Use(p.md.Logger())
+func (pd *HTTPProvider) Boot() {
+	if pd.cog.Config.GetBool("debug") {
+		pd.e.Use(pd.md.Logger())
 	}
-	p.fw.Use(p.md.Recover())
 
-	routes := routes.New(p.fw, p.md)
-	routes.Web()
-	routes.API()
+	pd.e.Use(pd.md.Recover())
+
+	pd.e.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
+			"name":        "go-api-skeleton",
+			"creator":     "Ramadani <email.ramadani@gmail.com>",
+			"description": "Go (Golang) API Skeleton",
+			"version":     "0.1.0-dev",
+		})
+	})
 }
 
 // NewHTTP returns route.
-func NewHTTP(fw *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
-	return &HTTPProvider{fw, cog, md}
+func NewHTTP(e *echo.Echo, cog *config.Config, md *middleware.Middleware) *HTTPProvider {
+	return &HTTPProvider{e, cog, md}
 }

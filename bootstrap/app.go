@@ -8,9 +8,6 @@ import (
 	"time"
 
 	"github.com/ramadani/go-api-skeleton/config"
-	"github.com/ramadani/go-api-skeleton/db"
-	"github.com/ramadani/go-api-skeleton/middleware"
-	"github.com/ramadani/go-api-skeleton/providers"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
@@ -18,40 +15,42 @@ import (
 
 // App contains the libraries that can be used in the app.
 type App struct {
-	fw  *echo.Echo
-	cog *config.Config
-	db  *db.Database
-	md  *middleware.Middleware
+	e         *echo.Echo
+	cog       *config.Config
+	bootables []Bootable
 }
 
-// Boot is to use execute the bootables code before their run.
-func (app *App) Boot() {
-	bootables := []Bootable{}
-
-	if app.cog.Config.GetBool("db.auto_migration") {
-		bootables = append(bootables, providers.NewDbMigration(app.db))
-	}
-
-	bootables = append(bootables, providers.NewHTTP(app.fw, app.cog, app.md))
-
-	for _, bootable := range bootables {
-		bootable.Boot()
-	}
+// AddBootable to run the boot on startup
+func (app *App) AddBootable(bootable Bootable) {
+	app.bootables = append(app.bootables, bootable)
 }
 
 // Run and serve the app.
 func (app *App) Run() {
+	app.boot()
+	app.serve()
+	app.shutdown()
+}
+
+// boot is to use execute the bootables code before their run.
+func (app *App) boot() {
+	for _, bootable := range app.bootables {
+		bootable.Boot()
+	}
+}
+
+func (app *App) serve() {
 	port := app.cog.Config.GetInt("port")
-	app.fw.Logger.SetLevel(log.INFO)
+	app.e.Logger.SetLevel(log.INFO)
 
 	go func() {
-		if err := app.fw.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.fw.Logger.Info("Shutting down the server")
+		if err := app.e.Start(fmt.Sprintf(":%d", port)); err != nil {
+			app.e.Logger.Info("Shutting down the server")
 		}
 	}()
+}
 
-	defer app.db.Close()
-
+func (app *App) shutdown() {
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 10 seconds.
 	quit := make(chan os.Signal)
@@ -59,17 +58,12 @@ func (app *App) Run() {
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := app.fw.Shutdown(ctx); err != nil {
-		app.fw.Logger.Fatal(err)
+	if err := app.e.Shutdown(ctx); err != nil {
+		app.e.Logger.Fatal(err)
 	}
 }
 
 // New returns app.
-func New(
-	fw *echo.Echo,
-	cog *config.Config,
-	db *db.Database,
-	md *middleware.Middleware,
-) *App {
-	return &App{fw, cog, db, md}
+func New(e *echo.Echo, cog *config.Config) *App {
+	return &App{e, cog, []Bootable{}}
 }
