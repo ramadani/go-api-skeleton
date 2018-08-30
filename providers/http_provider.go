@@ -24,7 +24,12 @@ func (pd *HTTPProvider) Boot() {
 	pd.e.Use(pd.md.Recover())
 
 	pd.e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Welcome Great Developer")
+		return c.JSON(http.StatusOK, map[string]string{
+			"name":        "go-api-skeleton",
+			"creator":     "Ramadani <email.ramadani@gmail.com>",
+			"description": "Go (Golang) API Skeleton",
+			"version":     "0.1.0-dev",
+		})
 	})
 }
 
