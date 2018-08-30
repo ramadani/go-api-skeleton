@@ -16,13 +16,14 @@ type HTTPProvider struct {
 }
 
 // Boot the http.
-func (p *HTTPProvider) Boot() {
-	if p.cog.Config.GetBool("debug") {
-		p.e.Use(p.md.Logger())
+func (pd *HTTPProvider) Boot() {
+	if pd.cog.Config.GetBool("debug") {
+		pd.e.Use(pd.md.Logger())
 	}
-	p.e.Use(p.md.Recover())
 
-	p.e.GET("/", func(c echo.Context) error {
+	pd.e.Use(pd.md.Recover())
+
+	pd.e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome Great Developer")
 	})
 }
