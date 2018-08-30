@@ -6,6 +6,7 @@ import (
 	"github.com/ramadani/go-api-skeleton/config"
 	"github.com/ramadani/go-api-skeleton/db"
 	"github.com/ramadani/go-api-skeleton/middleware"
+	"github.com/ramadani/go-api-skeleton/providers"
 )
 
 func main() {
@@ -13,7 +14,14 @@ func main() {
 	cog := config.Init()
 	db := db.Init(cog)
 	md := middleware.Init()
+	app := bootstrap.New(e, cog)
 
-	app := bootstrap.New(e, cog, db, md)
+	if cog.Config.GetBool("db.auto_migration") {
+		app.AddBootable(providers.NewDbMigration(db))
+	}
+
+	defer db.Close()
+
+	app.AddBootable(providers.NewHTTP(e, cog, md))
 	app.Run()
 }
