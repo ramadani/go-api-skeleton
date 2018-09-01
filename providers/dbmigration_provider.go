@@ -1,8 +1,9 @@
 package providers
 
 import (
+	todo "github.com/ramadani/go-api-skeleton/app/todo/model"
+	user "github.com/ramadani/go-api-skeleton/app/user/model"
 	"github.com/ramadani/go-api-skeleton/db"
-	"github.com/ramadani/go-api-skeleton/models"
 )
 
 // DbMigrationProvider contains db instance.
@@ -13,8 +14,8 @@ type DbMigrationProvider struct {
 // Boot the db migration.
 func (p *DbMigrationProvider) Boot() {
 	p.db.DB.AutoMigrate(
-		&models.User{},
-		&models.Todo{},
+		&user.User{},
+		&todo.Todo{},
 	)
 }
 
