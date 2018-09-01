@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ramadani/go-api-skeleton/app/todo/resource"
+
 	"github.com/labstack/echo"
 	"github.com/ramadani/go-api-skeleton/app/todo"
 )
@@ -15,21 +17,27 @@ type TodoHandler struct {
 
 // Index to show todo list
 func (h *TodoHandler) Index(c echo.Context) error {
-	return c.JSON(http.StatusOK, h.uc.All())
+	result := resource.Collection(h.uc.All())
+
+	return c.JSON(http.StatusOK, result)
 }
 
 // Create a new todo
 func (h *TodoHandler) Create(c echo.Context) error {
 	title := c.FormValue("title")
 	body := c.FormValue("body")
-	result := h.uc.Create(title, body)
+	todos := h.uc.Create(title, body)
+	result := resource.Item(todos)
+
 	return c.JSON(http.StatusOK, result)
 }
 
 // Find a todo from collection
 func (h *TodoHandler) Find(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	result := h.uc.Find(uint(id))
+	todo := h.uc.Find(uint(id))
+	result := resource.Item(todo)
+
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -38,7 +46,9 @@ func (h *TodoHandler) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	title := c.FormValue("title")
 	body := c.FormValue("body")
-	result := h.uc.Update(title, body, uint(id))
+	todo := h.uc.Update(title, body, uint(id))
+	result := resource.Item(todo)
+
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -46,6 +56,7 @@ func (h *TodoHandler) Update(c echo.Context) error {
 func (h *TodoHandler) Delete(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := h.uc.Delete(uint(id))
+
 	return c.JSON(http.StatusOK, result)
 }
 
