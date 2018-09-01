@@ -5,32 +5,32 @@ import (
 	"github.com/ramadani/go-api-skeleton/db"
 )
 
-type MySQLTodoRepo struct {
+type GormTodoRepo struct {
 	db *db.Database
 }
 
-func (td *MySQLTodoRepo) All() []model.Todo {
+func (td *GormTodoRepo) All() []model.Todo {
 	var todos []model.Todo
 	td.db.DB.Find(&todos)
 
 	return todos
 }
 
-func (td *MySQLTodoRepo) Create(title, body string) model.Todo {
+func (td *GormTodoRepo) Create(title, body string) model.Todo {
 	todo := model.Todo{Title: title, Body: body}
 	td.db.DB.Create(&todo)
 
 	return todo
 }
 
-func (td *MySQLTodoRepo) Find(id uint) model.Todo {
+func (td *GormTodoRepo) Find(id uint) model.Todo {
 	var todo model.Todo
 	td.db.DB.First(&todo, id)
 
 	return todo
 }
 
-func (td *MySQLTodoRepo) Update(title, body string, id uint) model.Todo {
+func (td *GormTodoRepo) Update(title, body string, id uint) model.Todo {
 	todo := td.Find(id)
 	todo.Title = title
 	todo.Body = body
@@ -40,7 +40,7 @@ func (td *MySQLTodoRepo) Update(title, body string, id uint) model.Todo {
 	return todo
 }
 
-func (td *MySQLTodoRepo) Delete(id uint) bool {
+func (td *GormTodoRepo) Delete(id uint) bool {
 	todo := td.Find(id)
 
 	td.db.DB.Delete(&todo)
@@ -48,6 +48,6 @@ func (td *MySQLTodoRepo) Delete(id uint) bool {
 	return true
 }
 
-func NewMySQLRepo(db *db.Database) *MySQLTodoRepo {
-	return &MySQLTodoRepo{db}
+func NewGormRepo(db *db.Database) *GormTodoRepo {
+	return &GormTodoRepo{db}
 }

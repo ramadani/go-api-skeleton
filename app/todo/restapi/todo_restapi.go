@@ -15,7 +15,7 @@ type TodoRest struct {
 
 // Boot the todo rest api
 func (tr *TodoRest) Boot() {
-	repo := repository.NewMySQLRepo(tr.db)
+	repo := repository.NewGormRepo(tr.db)
 	useCase := usecase.NewUseCase(repo)
 	handler := NewHandler(useCase)
 
