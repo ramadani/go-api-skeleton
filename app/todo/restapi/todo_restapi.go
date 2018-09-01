@@ -4,16 +4,18 @@ import (
 	"github.com/labstack/echo"
 	"github.com/ramadani/go-api-skeleton/app/todo/repository"
 	"github.com/ramadani/go-api-skeleton/app/todo/usecase"
+	"github.com/ramadani/go-api-skeleton/db"
 )
 
 // TodoRest contains the dependencies of todo rest api
 type TodoRest struct {
-	e *echo.Echo
+	e  *echo.Echo
+	db *db.Database
 }
 
 // Boot the todo rest api
 func (tr *TodoRest) Boot() {
-	repo := repository.NewDummyRepo()
+	repo := repository.NewGormRepo(tr.db)
 	useCase := usecase.NewUseCase(repo)
 	handler := NewHandler(useCase)
 
@@ -25,6 +27,6 @@ func (tr *TodoRest) Boot() {
 }
 
 // New returns todo rest
-func New(e *echo.Echo) *TodoRest {
-	return &TodoRest{e}
+func New(e *echo.Echo, db *db.Database) *TodoRest {
+	return &TodoRest{e, db}
 }

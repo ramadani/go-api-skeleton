@@ -22,7 +22,7 @@ func main() {
 	}
 
 	app.AddBootable(providers.NewHTTP(e, cog, md))
-	app.AddBootable(todoRestApi.New(e))
+	app.AddBootable(todoRestApi.New(e, db))
 
 	defer db.Close()
 

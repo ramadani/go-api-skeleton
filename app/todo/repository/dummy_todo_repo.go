@@ -31,24 +31,24 @@ func (rp *DummyTodoRepo) Create(title, body string) model.Todo {
 	return todo
 }
 
-func (rp *DummyTodoRepo) Find(id uint) model.Todo {
-	return rp.todos[id-1]
+func (rp *DummyTodoRepo) Find(id uint) (model.Todo, error) {
+	return rp.todos[id-1], nil
 }
 
-func (rp *DummyTodoRepo) Update(title, body string, id uint) model.Todo {
-	todo := rp.Find(id)
+func (rp *DummyTodoRepo) Update(title, body string, id uint) (model.Todo, error) {
+	todo, _ := rp.Find(id)
 	todo.Title = title
 	todo.Body = body
 	todo.UpdatedAt = time.Now()
 	rp.todos[id-1] = todo
 
-	return todo
+	return todo, nil
 }
 
-func (rp *DummyTodoRepo) Delete(id uint) bool {
+func (rp *DummyTodoRepo) Delete(id uint) error {
 	rp.todos = append(rp.todos[:(id-1)], rp.todos[(id-1)+1:]...)
 
-	return true
+	return nil
 }
 
 func NewDummyRepo() *DummyTodoRepo {
