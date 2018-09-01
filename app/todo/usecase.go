@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"github.com/ramadani/go-api-skeleton/app/commons/response"
 	"github.com/ramadani/go-api-skeleton/app/todo/model"
 )
 
@@ -9,7 +8,7 @@ import (
 type UseCase interface {
 	All() []model.Todo
 	Create(title, body string) model.Todo
-	Find(id uint) model.Todo
-	Update(title, body string, id uint) model.Todo
-	Delete(id uint) response.Message
+	Find(id uint) (model.Todo, error)
+	Update(title, body string, id uint) (model.Todo, error)
+	Delete(id uint) error
 }

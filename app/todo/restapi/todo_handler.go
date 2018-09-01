@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ramadani/go-api-skeleton/app/commons/response"
+
 	"github.com/ramadani/go-api-skeleton/app/todo/resource"
 
 	"github.com/labstack/echo"
@@ -35,7 +37,14 @@ func (h *TodoHandler) Create(c echo.Context) error {
 // Find a todo from collection
 func (h *TodoHandler) Find(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	todo := h.uc.Find(uint(id))
+	todo, err := h.uc.Find(uint(id))
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, response.Message{
+			Message: err.Error(),
+		})
+	}
+
 	result := resource.Item(todo)
 
 	return c.JSON(http.StatusOK, result)
@@ -46,7 +55,14 @@ func (h *TodoHandler) Update(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	title := c.FormValue("title")
 	body := c.FormValue("body")
-	todo := h.uc.Update(title, body, uint(id))
+	todo, err := h.uc.Update(title, body, uint(id))
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, response.Message{
+			Message: err.Error(),
+		})
+	}
+
 	result := resource.Item(todo)
 
 	return c.JSON(http.StatusOK, result)
@@ -55,9 +71,17 @@ func (h *TodoHandler) Update(c echo.Context) error {
 // Delete a todo from collection
 func (h *TodoHandler) Delete(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	result := h.uc.Delete(uint(id))
+	err := h.uc.Delete(uint(id))
 
-	return c.JSON(http.StatusOK, result)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, response.Message{
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, response.Message{
+		Message: "Todo has been deleted",
+	})
 }
 
 // NewHandler returns todo handler

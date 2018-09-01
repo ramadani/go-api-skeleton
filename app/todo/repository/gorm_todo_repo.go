@@ -23,29 +23,33 @@ func (td *GormTodoRepo) Create(title, body string) model.Todo {
 	return todo
 }
 
-func (td *GormTodoRepo) Find(id uint) model.Todo {
+func (td *GormTodoRepo) Find(id uint) (model.Todo, error) {
 	var todo model.Todo
-	td.db.DB.First(&todo, id)
+	err := td.db.DB.First(&todo, id).Error
 
-	return todo
+	return todo, err
 }
 
-func (td *GormTodoRepo) Update(title, body string, id uint) model.Todo {
-	todo := td.Find(id)
-	todo.Title = title
-	todo.Body = body
+func (td *GormTodoRepo) Update(title, body string, id uint) (model.Todo, error) {
+	todo, err := td.Find(id)
 
-	td.db.DB.Save(&todo)
+	if err == nil {
+		todo.Title = title
+		todo.Body = body
+		td.db.DB.Save(&todo)
+	}
 
-	return todo
+	return todo, err
 }
 
-func (td *GormTodoRepo) Delete(id uint) bool {
-	todo := td.Find(id)
+func (td *GormTodoRepo) Delete(id uint) error {
+	todo, err := td.Find(id)
 
-	td.db.DB.Delete(&todo)
+	if err != nil {
+		return err
+	}
 
-	return true
+	return td.db.DB.Delete(&todo).Error
 }
 
 func NewGormRepo(db *db.Database) *GormTodoRepo {
