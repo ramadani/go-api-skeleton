@@ -40,8 +40,12 @@ func (app *App) boot() {
 }
 
 func (app *App) serve() {
-	port := app.cog.Config.GetInt("port")
+	port := app.cog.Config.GetInt("app.port")
+	isDebug := app.cog.Config.GetBool("app.debug")
+
 	app.e.Logger.SetLevel(log.INFO)
+	app.e.HideBanner = !isDebug
+	app.e.Debug = isDebug
 
 	go func() {
 		if err := app.e.Start(fmt.Sprintf(":%d", port)); err != nil {
