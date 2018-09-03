@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo"
+	authRestApi "github.com/ramadani/go-api-skeleton/app/auth/restapi"
 	todoRestApi "github.com/ramadani/go-api-skeleton/app/todo/restapi"
 	"github.com/ramadani/go-api-skeleton/bootstrap"
 	"github.com/ramadani/go-api-skeleton/config"
@@ -22,6 +23,7 @@ func main() {
 	}
 
 	app.AddBootable(providers.NewHTTP(e, md))
+	app.AddBootable(authRestApi.New(e, db))
 	app.AddBootable(todoRestApi.New(e, db))
 
 	defer db.Close()
