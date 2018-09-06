@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"github.com/labstack/echo"
+	"github.com/ramadani/go-api-skeleton/app/auth/jwt"
 	"github.com/ramadani/go-api-skeleton/app/auth/usecase"
 	gormUserRepo "github.com/ramadani/go-api-skeleton/app/user/repository"
 	"github.com/ramadani/go-api-skeleton/db"
@@ -13,8 +14,9 @@ type AuthRest struct {
 }
 
 func (ar *AuthRest) Boot() {
+	jwt := jwt.New("secret")
 	userRepo := gormUserRepo.NewGormRepo(ar.db)
-	usecase := usecase.NewUseCase(userRepo)
+	usecase := usecase.NewUseCase(userRepo, jwt)
 	handler := NewHandler(usecase)
 
 	ar.e.POST("/login", handler.Attempt)
