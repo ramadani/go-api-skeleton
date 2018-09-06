@@ -22,7 +22,9 @@ func (h *AuthHandler) Attempt(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, response.Message{err.Error()})
 	}
 
-	return c.String(http.StatusOK, result)
+	return c.JSON(http.StatusOK, map[string]string{
+		"token": result,
+	})
 }
 
 func (h *AuthHandler) Register(c echo.Context) error {
@@ -36,7 +38,7 @@ func (h *AuthHandler) Register(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.Message{err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, response.Message{"registered. account needs to activation!"})
+	return c.JSON(http.StatusOK, response.Message{"registered"})
 }
 
 func NewHandler(uc auth.UseCase) *AuthHandler {
