@@ -33,6 +33,13 @@ func (j *Jwt) GenerateToken(user model.User) (string, error) {
 	return t, err
 }
 
+func (j *Jwt) GetUser(data interface{}) *UserClaims {
+	user := data.(*jwt.Token)
+	claims := user.Claims.(*UserClaims)
+
+	return claims
+}
+
 func New(secret string) *Jwt {
 	return &Jwt{secret}
 }
