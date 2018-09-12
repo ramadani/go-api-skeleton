@@ -1,6 +1,6 @@
 # go-api-skeleton
 
-Go Api Skeleton (development)
+Go Api Skeleton
 
 ## Requirement
 
@@ -18,3 +18,4 @@ Go Api Skeleton (development)
 - [echo](https://github.com/labstack/echo)
 - [viper](https://github.com/spf13/viper)
 - [gorm](https://github.com/jinzhu/gorm)
+- [jwt-go](https://github.com/dgrijalva/jwt-go)
