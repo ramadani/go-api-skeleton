@@ -6,26 +6,26 @@ import (
 )
 
 type GormTodoRepo struct {
-	db *db.Gorm
+	db db.Orm
 }
 
 func (td *GormTodoRepo) All() []model.Todo {
 	var todos []model.Todo
-	td.db.DB.Find(&todos)
+	td.db.Find(&todos)
 
 	return todos
 }
 
 func (td *GormTodoRepo) Create(title, body string) model.Todo {
 	todo := model.Todo{Title: title, Body: body}
-	td.db.DB.Create(&todo)
+	td.db.Create(&todo)
 
 	return todo
 }
 
 func (td *GormTodoRepo) Find(id uint) (model.Todo, error) {
 	var todo model.Todo
-	err := td.db.DB.First(&todo, id).Error
+	err := td.db.First(&todo, id).Error
 
 	return todo, err
 }
@@ -36,7 +36,7 @@ func (td *GormTodoRepo) Update(title, body string, id uint) (model.Todo, error) 
 	if err == nil {
 		todo.Title = title
 		todo.Body = body
-		td.db.DB.Save(&todo)
+		td.db.Save(&todo)
 	}
 
 	return todo, err
@@ -49,9 +49,9 @@ func (td *GormTodoRepo) Delete(id uint) error {
 		return err
 	}
 
-	return td.db.DB.Delete(&todo).Error
+	return td.db.Delete(&todo).Error
 }
 
-func NewGormRepo(db *db.Gorm) *GormTodoRepo {
+func NewGormRepo(db db.Orm) *GormTodoRepo {
 	return &GormTodoRepo{db}
 }

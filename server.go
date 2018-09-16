@@ -24,7 +24,7 @@ func main() {
 
 	app.AddBootable(providers.NewHTTP(e, md))
 	app.AddBootable(authRestApi.New(e, db, cog, md))
-	app.AddBootable(todoRestApi.New(e, db))
+	app.AddBootable(todoRestApi.New(e, db.DB))
 
 	defer db.Close()
 
