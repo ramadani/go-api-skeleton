@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/labstack/echo"
 	authRestApi "github.com/ramadani/go-api-skeleton/app/auth/restapi"
 	todoRestApi "github.com/ramadani/go-api-skeleton/app/todo/restapi"
@@ -14,7 +16,8 @@ import (
 func main() {
 	e := echo.New()
 	cog := config.Init()
-	db := db.Init(cog)
+	driver, connection := mysqlConnection(cog)
+	db := db.New(driver, connection)
 	md := middleware.Init(cog)
 	app := bootstrap.New(e, cog)
 
@@ -29,4 +32,16 @@ func main() {
 	defer db.Close()
 
 	app.Run()
+}
+
+func mysqlConnection(cog *config.Config) (string, string) {
+	driver := cog.GetString("db.connections.mysql.driver")
+	host := cog.GetString("db.connections.mysql.host")
+	port := cog.GetString("db.connections.mysql.port")
+	user := cog.GetString("db.connections.mysql.user")
+	pass := cog.GetString("db.connections.mysql.password")
+	dbName := cog.GetString("db.connections.mysql.db_name")
+	format := "%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True"
+
+	return driver, fmt.Sprintf(format, user, pass, host, port, dbName)
 }
