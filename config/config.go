@@ -8,7 +8,19 @@ import (
 
 // Config contains library for configuration.
 type Config struct {
-	Config *viper.Viper
+	vp *viper.Viper
+}
+
+func (cog *Config) GetInt(key string) int {
+	return cog.vp.GetInt(key)
+}
+
+func (cog *Config) GetString(key string) string {
+	return cog.vp.GetString(key)
+}
+
+func (cog *Config) GetBool(key string) bool {
+	return cog.vp.GetBool(key)
 }
 
 // Init the configuration using viper and returns viper.

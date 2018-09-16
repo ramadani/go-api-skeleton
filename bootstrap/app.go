@@ -40,8 +40,8 @@ func (app *App) boot() {
 }
 
 func (app *App) serve() {
-	port := app.cog.Config.GetInt("app.port")
-	isDebug := app.cog.Config.GetBool("app.debug")
+	port := app.cog.GetInt("app.port")
+	isDebug := app.cog.GetBool("app.debug")
 
 	app.e.Logger.SetLevel(log.DEBUG)
 	app.e.HideBanner = !isDebug

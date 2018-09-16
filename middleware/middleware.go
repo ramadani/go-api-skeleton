@@ -21,7 +21,7 @@ func Init(cog *config.Config) *Middleware {
 func (md *Middleware) Logger() echo.MiddlewareFunc {
 	return middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Skipper: func(c echo.Context) bool {
-			return !md.cog.Config.GetBool("app.debug")
+			return !md.cog.GetBool("app.debug")
 		},
 	})
 }
@@ -35,7 +35,7 @@ func (md *Middleware) Recover() echo.MiddlewareFunc {
 func (md *Middleware) Jwt() echo.MiddlewareFunc {
 	config := middleware.JWTConfig{
 		Claims:     &jwt.UserClaims{},
-		SigningKey: []byte(md.cog.Config.GetString("jwt.key")),
+		SigningKey: []byte(md.cog.GetString("jwt.key")),
 	}
 
 	return middleware.JWTWithConfig(config)

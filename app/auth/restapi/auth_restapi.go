@@ -24,7 +24,7 @@ type AuthRest struct {
 
 // Boot the auth rest api
 func (ar *AuthRest) Boot() {
-	jwt := jwt.New(ar.cog.Config.GetString("jwt.key"))
+	jwt := jwt.New(ar.cog.GetString("jwt.key"))
 	userRepo := gormUserRepo.NewGormRepo(ar.db)
 	usecase := usecase.NewUseCase(userRepo, jwt)
 	handler := NewHandler(usecase)

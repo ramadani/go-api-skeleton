@@ -22,20 +22,20 @@ func (db *Database) Close() error {
 
 // Init the database connection and returns db.
 func Init(cog *config.Config) *Database {
-	driver := cog.Config.GetString("db.driver")
+	driver := cog.GetString("db.driver")
 
 	var connection string
 
 	switch driver {
 	case "mysql":
-		host := cog.Config.GetString("mysql.host")
-		port := cog.Config.GetString("mysql.port")
-		user := cog.Config.GetString("mysql.user")
-		pass := cog.Config.GetString("mysql.password")
-		dbName := cog.Config.GetString("mysql.db_name")
+		host := cog.GetString("mysql.host")
+		port := cog.GetString("mysql.port")
+		user := cog.GetString("mysql.user")
+		pass := cog.GetString("mysql.password")
+		dbName := cog.GetString("mysql.db_name")
 		connection = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", user, pass, host, port, dbName)
 	default:
-		connection = cog.Config.GetString("sqlite3.db")
+		connection = cog.GetString("sqlite3.db")
 	}
 
 	db, err := gorm.Open(driver, connection)

@@ -18,7 +18,7 @@ func main() {
 	md := middleware.Init(cog)
 	app := bootstrap.New(e, cog)
 
-	if cog.Config.GetBool("db.auto_migrate") {
+	if cog.GetBool("db.auto_migrate") {
 		app.AddBootable(providers.NewDbMigration(db))
 	}
 
