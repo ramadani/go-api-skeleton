@@ -10,7 +10,7 @@ import (
 // TodoRest contains the dependencies of todo rest api
 type TodoRest struct {
 	e  *echo.Echo
-	db *db.Database
+	db *db.Gorm
 }
 
 // Boot the todo rest api
@@ -27,6 +27,6 @@ func (tr *TodoRest) Boot() {
 }
 
 // New returns todo rest
-func New(e *echo.Echo, db *db.Database) *TodoRest {
+func New(e *echo.Echo, db *db.Gorm) *TodoRest {
 	return &TodoRest{e, db}
 }

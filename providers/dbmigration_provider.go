@@ -8,7 +8,7 @@ import (
 
 // DbMigrationProvider contains db instance.
 type DbMigrationProvider struct {
-	db *db.Database
+	db *db.Gorm
 }
 
 // Boot the db migration.
@@ -20,6 +20,6 @@ func (p *DbMigrationProvider) Boot() {
 }
 
 // NewDbMigration returns db migration.
-func NewDbMigration(db *db.Database) *DbMigrationProvider {
+func NewDbMigration(db *db.Gorm) *DbMigrationProvider {
 	return &DbMigrationProvider{db}
 }

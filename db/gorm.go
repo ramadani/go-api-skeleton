@@ -10,18 +10,18 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite" // sqlite dialect
 )
 
-// Database contains db library.
-type Database struct {
+// Gorm contains db library.
+type Gorm struct {
 	DB *gorm.DB
 }
 
 // Close the connection
-func (db *Database) Close() error {
+func (db *Gorm) Close() error {
 	return db.DB.Close()
 }
 
 // Init the database connection and returns db.
-func Init(cog *config.Config) *Database {
+func Init(cog *config.Config) *Gorm {
 	driver := cog.GetString("db.driver")
 
 	var connection string
@@ -44,5 +44,5 @@ func Init(cog *config.Config) *Database {
 		panic("failed to connect database")
 	}
 
-	return &Database{db}
+	return &Gorm{db}
 }

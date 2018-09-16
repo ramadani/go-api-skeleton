@@ -6,7 +6,7 @@ import (
 )
 
 type GormTodoRepo struct {
-	db *db.Database
+	db *db.Gorm
 }
 
 func (td *GormTodoRepo) All() []model.Todo {
@@ -52,6 +52,6 @@ func (td *GormTodoRepo) Delete(id uint) error {
 	return td.db.DB.Delete(&todo).Error
 }
 
-func NewGormRepo(db *db.Database) *GormTodoRepo {
+func NewGormRepo(db *db.Gorm) *GormTodoRepo {
 	return &GormTodoRepo{db}
 }

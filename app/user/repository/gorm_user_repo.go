@@ -6,7 +6,7 @@ import (
 )
 
 type GormUserRepo struct {
-	db *db.Database
+	db *db.Gorm
 }
 
 func (rp *GormUserRepo) Create(name, email, password string) (model.User, error) {
@@ -23,6 +23,6 @@ func (rp *GormUserRepo) FindByEmail(email string) (model.User, error) {
 	return user, err
 }
 
-func NewGormRepo(db *db.Database) *GormUserRepo {
+func NewGormRepo(db *db.Gorm) *GormUserRepo {
 	return &GormUserRepo{db}
 }

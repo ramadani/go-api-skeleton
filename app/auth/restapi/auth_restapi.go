@@ -17,7 +17,7 @@ import (
 // AuthRest contains dependencies to handle auth
 type AuthRest struct {
 	e   *echo.Echo
-	db  *db.Database
+	db  *db.Gorm
 	cog *config.Config
 	md  *middleware.Middleware
 }
@@ -40,7 +40,7 @@ func (ar *AuthRest) Boot() {
 // New auth restapi
 func New(
 	e *echo.Echo,
-	db *db.Database,
+	db *db.Gorm,
 	cog *config.Config,
 	md *middleware.Middleware,
 ) *AuthRest {
