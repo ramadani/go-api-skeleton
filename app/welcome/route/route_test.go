@@ -5,28 +5,35 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/suite"
+
 	"github.com/ramadani/go-api-skeleton/app/welcome/route"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestWelcomeIndexHandler(t *testing.T) {
-	assert := assert.New(t)
+type WelcomeRouteTestSuite struct {
+	suite.Suite
+	rr       *httptest.ResponseRecorder
+	handlers *route.Handler
+}
+
+func (suite *WelcomeRouteTestSuite) SetupTest() {
+	suite.rr = httptest.NewRecorder()
+	suite.handlers = route.NewHandler()
+}
+
+func (suite *WelcomeRouteTestSuite) TestIndexRoute() {
 	req, err := http.NewRequest(http.MethodGet, "/", nil)
+	suite.Nil(err)
 
-	assert.NoError(err)
-
-	rr := httptest.NewRecorder()
-	h := route.NewHandler()
-
-	handler := http.HandlerFunc(h.Index)
-	handler.ServeHTTP(rr, req)
-
+	handler := http.HandlerFunc(suite.handlers.Index)
+	handler.ServeHTTP(suite.rr, req)
 	// Check the status code is what we expect.
-	statusCode := rr.Code
-	assert.Equal(http.StatusOK, statusCode)
-
+	suite.Equal(http.StatusOK, suite.rr.Code)
 	// Check the response body is what we expect.
 	expectedBody := `{"name":"Go API Skeleton","description":"Go (Golang) API Skeleton for your great API","version":"v0.1.0"}`
-	actualBody := rr.Body.String()
-	assert.Equal(expectedBody, actualBody)
+	suite.Equal(expectedBody, suite.rr.Body.String())
+}
+
+func TestWelcomeRouteTestSuite(t *testing.T) {
+	suite.Run(t, new(WelcomeRouteTestSuite))
 }

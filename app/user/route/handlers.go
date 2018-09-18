@@ -5,14 +5,16 @@ import (
 	"net/http"
 )
 
-type handler struct{}
+// Handler contains deps
+type Handler struct{}
 
 type user struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
 
-func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
+// Index of user handlers
+func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	user := user{"Ramadani", "email.ramadani@gmail.com"}
 	json, _ := json.Marshal(user)
 
@@ -21,6 +23,6 @@ func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewHandler user
-func NewHandler() *handler {
-	return &handler{}
+func NewHandler() *Handler {
+	return &Handler{}
 }

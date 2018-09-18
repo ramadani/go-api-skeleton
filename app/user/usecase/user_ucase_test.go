@@ -12,7 +12,7 @@ type UserUsecaseTestSuite struct {
 	usecase *usecase.UserUsecase
 }
 
-func (suite *UserUsecaseTestSuite) SetupSuite() {
+func (suite *UserUsecaseTestSuite) SetupTest() {
 	suite.usecase = usecase.New()
 }
 

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type handler struct{}
+type Handler struct{}
 
 type welcome struct {
 	Name        string `json:"name"`
@@ -13,7 +13,7 @@ type welcome struct {
 	Version     string `json:"version"`
 }
 
-func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	welcome := welcome{
 		"Go API Skeleton",
 		"Go (Golang) API Skeleton for your great API",
@@ -26,6 +26,6 @@ func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewHandler welcome handler
-func NewHandler() *handler {
-	return &handler{}
+func NewHandler() *Handler {
+	return &Handler{}
 }
