@@ -10,10 +10,6 @@ import (
 	"github.com/ramadani/go-api-skeleton/bootstrap"
 )
 
-type example struct {
-	Name string `json:"name"`
-}
-
 func main() {
 	r := mux.NewRouter()
 
