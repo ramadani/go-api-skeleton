@@ -25,7 +25,7 @@ func (suite *UserRouteTestSuite) TestIndexRoute() {
 	req, err := http.NewRequest(http.MethodGet, "/users", nil)
 	suite.Nil(err)
 
-	handler := http.HandlerFunc(suite.handlers.Index)
+	handler := http.HandlerFunc(suite.handlers.Index())
 	handler.ServeHTTP(suite.rr, req)
 	// Check the status code is what we expect.
 	suite.Equal(http.StatusOK, suite.rr.Code)

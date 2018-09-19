@@ -18,14 +18,16 @@ type welcome struct {
 }
 
 // Index handler
-func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
-	welcome := welcome{
-		"Go API Skeleton",
-		"Go (Golang) API Skeleton for your great API",
-		"v0.1.0",
-	}
+func (h *Handler) Index() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		welcome := welcome{
+			"Go API Skeleton",
+			"Go (Golang) API Skeleton for your great API",
+			"v0.1.0",
+		}
 
-	h.JSON(w, http.StatusOK, welcome)
+		h.JSON(w, welcome, http.StatusOK)
+	}
 }
 
 // NewHandler welcome handler

@@ -10,5 +10,5 @@ import (
 func New(router *mux.Router) {
 	handler := NewHandler()
 
-	router.HandleFunc("/", handler.Index).Methods(http.MethodGet)
+	router.HandleFunc("/", handler.Index()).Methods(http.MethodGet)
 }

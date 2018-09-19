@@ -17,10 +17,12 @@ type user struct {
 }
 
 // Index of user handlers
-func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
-	user := user{"Ramadani", "email.ramadani@gmail.com"}
+func (h *Handler) Index() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := user{"Ramadani", "email.ramadani@gmail.com"}
 
-	h.JSON(w, http.StatusOK, user)
+		h.JSON(w, user, http.StatusOK)
+	}
 }
 
 // NewHandler user
