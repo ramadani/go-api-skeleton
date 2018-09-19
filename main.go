@@ -1,7 +1,11 @@
 package main
 
 import (
+	"database/sql"
+	"log"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -12,10 +16,16 @@ import (
 
 func main() {
 	r := mux.NewRouter()
+	db, err := sql.Open("mysql", "root@root@tcp(127.0.0.1:3306)/go_api")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
 
 	// Our routes
 	welcomeRoute.New(r)
-	userRoute.New(r)
+	userRoute.New(r, db)
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	compressedRouter := handlers.CompressHandler(loggedRouter)

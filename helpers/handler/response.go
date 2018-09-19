@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Respose http
+// Response http
 type Response struct{}
 
 type responseError struct {
@@ -16,7 +16,7 @@ type responseError struct {
 func (res *Response) JSON(w http.ResponseWriter, data interface{}, statusCode int) {
 	result, err := json.Marshal(data)
 	if err != nil {
-		res.jsonError(w, http.StatusInternalServerError, err)
+		res.Fail(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -25,8 +25,9 @@ func (res *Response) JSON(w http.ResponseWriter, data interface{}, statusCode in
 	w.Write(result)
 }
 
-func (res *Response) jsonError(w http.ResponseWriter, statusCode int, err error) {
-	result, _ := json.Marshal(responseError{err.Error()})
+// Fail response with json format
+func (res *Response) Fail(w http.ResponseWriter, msg string, statusCode int) {
+	result, _ := json.Marshal(responseError{msg})
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
