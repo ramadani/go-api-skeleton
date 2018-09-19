@@ -21,7 +21,7 @@ func (h *Handler) Index() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := user{"Ramadani", "email.ramadani@gmail.com"}
 
-		h.Respose.JSON(w, user, http.StatusOK)
+		h.Response.JSON(w, user, http.StatusOK)
 	}
 }
 
