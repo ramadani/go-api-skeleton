@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	PaginateQuery = "SELECT id, name, email FROM users LIMIT ? OFFSET ?"
-	CountQuery    = "SELECT COUNT(id) AS total FROM users"
+	// PaginateQuery get user paginate
+	PaginateQuery = `SELECT id, name, email FROM users WHERE deleted_at IS NULL OFFSET ? LIMIT ?`
+	// CountQuery get total of user
+	CountQuery = `SELECT COUNT(id) AS total FROM users WHERE deleted_at IS NULL`
 )
 
 // MySQLRepository of user repo
@@ -21,8 +23,8 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 	var users []data.User
 	var total uint
 
-	// get users
-	userRows, pErr := repo.db.Query(PaginateQuery, limit, offset)
+	// get users by given query
+	userRows, pErr := repo.db.Query(PaginateQuery, offset, limit)
 	if pErr != nil {
 		return users, total, pErr
 	}
@@ -36,9 +38,10 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 		users = append(users, user)
 	}
 
+	// get total of users by given query
 	totalRows, tErr := repo.db.Query(CountQuery)
 	if tErr != nil {
-		panic(tErr)
+		return users, total, tErr
 	}
 
 	defer totalRows.Close()

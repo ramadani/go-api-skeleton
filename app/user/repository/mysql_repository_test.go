@@ -29,8 +29,10 @@ func (suite *MySqlUserRepoTestSuite) TestPaginate() {
 		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
 	}
 
-	mock.ExpectQuery("^SELECT (.+) FROM users LIMIT (.?) OFFSET (.?)").WithArgs(limit, 0).WillReturnRows(userRows)
-	mock.ExpectQuery("^SELECT (.+) FROM users").WillReturnRows(totalRows)
+	mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
+		WithArgs(0, limit).
+		WillReturnRows(userRows)
+	mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).WillReturnRows(totalRows)
 
 	users, total, uErr := suite.repo.Paginate(0, uint(limit))
 
