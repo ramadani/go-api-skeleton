@@ -26,7 +26,7 @@ func (h *Handler) Index() http.HandlerFunc {
 			"v0.1.0",
 		}
 
-		h.JSON(w, welcome, http.StatusOK)
+		h.Respose.JSON(w, welcome, http.StatusOK)
 	}
 }
 
