@@ -14,7 +14,7 @@ const (
 	PaginateQuery = `SELECT id, name, email FROM users WHERE deleted_at IS NULL OFFSET ? LIMIT ?`
 	// CountQuery get total of user
 	CountQuery = `SELECT COUNT(id) AS total FROM users WHERE deleted_at IS NULL`
-	// Create a new user query
+	// CreateQuery to create a new user query
 	CreateQuery = `INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`
 )
 
@@ -82,6 +82,21 @@ func (repo *MySQLRepository) Create(name, email, password string) (data.User, er
 	}
 
 	return data.User{ID: 1, Name: name, Email: email}, nil
+}
+
+// FindByID to find user by id
+func (repo *MySQLRepository) FindByID(id uint) (data.User, error) {
+	return data.User{}, nil
+}
+
+// Update an existing user
+func (repo *MySQLRepository) Update(name string, id uint) (data.User, error) {
+	return data.User{}, nil
+}
+
+// Delete an existing user
+func (repo *MySQLRepository) Delete(id uint) error {
+	return nil
 }
 
 // NewMySQLRepository new mysql user repo
