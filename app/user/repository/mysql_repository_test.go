@@ -132,6 +132,9 @@ func (suite *MySqlUserRepoTestSuite) TestShouldUpdateUser() {
 
 	err := suite.repo.Update("BarFoo", 1)
 	suite.Nil(err)
+
+	err = suite.mock.ExpectationsWereMet()
+	suite.Nil(err)
 }
 
 func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
@@ -146,6 +149,9 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
 
 	err := suite.repo.Update("BarFoo", 1)
 	suite.NotNil(err)
+
+	err = suite.mock.ExpectationsWereMet()
+	suite.Nil(err)
 }
 
 func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
@@ -158,6 +164,9 @@ func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
 	suite.mock.ExpectCommit()
 
 	err := suite.repo.Delete(1)
+	suite.Nil(err)
+
+	err = suite.mock.ExpectationsWereMet()
 	suite.Nil(err)
 }
 
@@ -172,6 +181,9 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackDeleteUserOnFailure() {
 
 	err := suite.repo.Delete(1)
 	suite.NotNil(err)
+
+	err = suite.mock.ExpectationsWereMet()
+	suite.Nil(err)
 }
 
 func TestMySqlUserRepoTestSuite(t *testing.T) {
