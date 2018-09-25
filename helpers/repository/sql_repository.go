@@ -7,8 +7,8 @@ import (
 // SQLRepository helpers
 type SQLRepository struct{}
 
-// CommitRollback for transaction
-func (repo *SQLRepository) CommitRollback(tx *sql.Tx, err error) {
+// DoTx for transaction
+func (repo *SQLRepository) DoTx(tx *sql.Tx, err error) {
 	switch err {
 	case nil:
 		err = tx.Commit()

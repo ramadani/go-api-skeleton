@@ -69,7 +69,7 @@ func (repo *MySQLRepository) Create(name, email, password string) (uint, error) 
 	now := time.Now().Format(format.DateTimeToString)
 	res, err := tx.Exec(CreateQuery, name, email, password, now, now)
 
-	defer repo.CommitRollback(tx, err)
+	defer repo.DoTx(tx, err)
 	if err != nil {
 		return 0, err
 	}
@@ -100,7 +100,7 @@ func (repo *MySQLRepository) Update(name string, id uint) error {
 
 	now := time.Now().Format(format.DateTimeToString)
 	_, err = tx.Exec(UpdateQuery, name, now, id)
-	defer repo.CommitRollback(tx, err)
+	defer repo.DoTx(tx, err)
 
 	return err
 }
@@ -113,7 +113,7 @@ func (repo *MySQLRepository) Delete(id uint) error {
 	}
 
 	_, err = tx.Exec(DeleteQuery, id)
-	defer repo.CommitRollback(tx, err)
+	defer repo.DoTx(tx, err)
 
 	return err
 }
