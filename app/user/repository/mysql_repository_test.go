@@ -3,8 +3,10 @@ package repository_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/ramadani/go-api-skeleton/app/user/repository"
+	"github.com/ramadani/go-api-skeleton/helpers/format"
 	"github.com/stretchr/testify/suite"
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
@@ -41,8 +43,24 @@ func (suite *MySqlUserRepoTestSuite) TestPaginate() {
 	suite.Equal(limit, len(users))
 }
 
-func (suite *MySqlUserRepoTestSuite) TestCreate() {
-	suite.T().Skip()
+func (suite *MySqlUserRepoTestSuite) TestShouldCreateNewUser() {
+	db, mock, err := sqlmock.New()
+	suite.Nil(err)
+	defer db.Close()
+
+	suite.repo = repository.NewMySQLRepository(db)
+
+	mock.ExpectBegin()
+	now := time.Now().Format(format.DateTimeToString)
+	mock.ExpectExec(`INSERT INTO users (.+) VALUES (.+)`).
+		WithArgs("FooBar", "foo@example.com", "randomstring", now, now).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	user, err := suite.repo.Create("FooBar", "foo@example.com", "randomstring")
+	suite.Nil(err)
+	suite.Equal(user.Name, "FooBar")
+	suite.Equal(user.Email, "foo@example.com")
 }
 
 func (suite *MySqlUserRepoTestSuite) TestFindById() {

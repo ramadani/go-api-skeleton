@@ -2,8 +2,11 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
+	"time"
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
+	"github.com/ramadani/go-api-skeleton/helpers/format"
 )
 
 const (
@@ -11,6 +14,8 @@ const (
 	PaginateQuery = `SELECT id, name, email FROM users WHERE deleted_at IS NULL OFFSET ? LIMIT ?`
 	// CountQuery get total of user
 	CountQuery = `SELECT COUNT(id) AS total FROM users WHERE deleted_at IS NULL`
+	// Create a new user query
+	CreateQuery = `INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`
 )
 
 // MySQLRepository of user repo
@@ -50,6 +55,33 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 	}
 
 	return users, total, nil
+}
+
+// Create a new user
+func (repo *MySQLRepository) Create(name, email, password string) (data.User, error) {
+	tx, tErr := repo.db.Begin()
+	if tErr != nil {
+		return data.User{}, tErr
+	}
+
+	now := time.Now().Format(format.DateTimeToString)
+	fmt.Println(now)
+	_, qErr := tx.Exec(CreateQuery, name, email, password, now, now)
+
+	defer func() {
+		switch qErr {
+		case nil:
+			qErr = tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+	if qErr != nil {
+		return data.User{}, qErr
+	}
+
+	return data.User{ID: 1, Name: name, Email: email}, nil
 }
 
 // NewMySQLRepository new mysql user repo
