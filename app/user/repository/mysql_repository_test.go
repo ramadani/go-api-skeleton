@@ -68,6 +68,26 @@ func (suite *MySqlUserRepoTestSuite) TestShouldCreateNewUser() {
 	suite.Nil(err)
 	suite.Equal(user.Name, "FooBar")
 	suite.Equal(user.Email, "foo@example.com")
+
+	err = suite.mock.ExpectationsWereMet()
+	suite.Nil(err)
+}
+
+func (suite *MySqlUserRepoTestSuite) TestShouldRollbackCreateUserOnFailure() {
+	defer suite.db.Close()
+
+	suite.mock.ExpectBegin()
+	now := time.Now().Format(format.DateTimeToString)
+	suite.mock.ExpectExec(`INSERT INTO users (.+) VALUES (.+)`).
+		WithArgs("FooBar", "foo@example.com", "randomstring", now, now).
+		WillReturnError(fmt.Errorf("Some error"))
+	suite.mock.ExpectRollback()
+
+	_, err := suite.repo.Create("FooBar", "foo@example.com", "randomstring")
+	suite.NotNil(err)
+
+	err = suite.mock.ExpectationsWereMet()
+	suite.Nil(err)
 }
 
 func (suite *MySqlUserRepoTestSuite) TestFindById() {
