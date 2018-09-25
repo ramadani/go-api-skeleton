@@ -7,6 +7,6 @@ type Repository interface {
 	Paginate(offset, limit uint) ([]data.User, uint, error)
 	Create(name, email, password string) (uint, error)
 	FindByID(id uint) (data.User, error)
-	Update(name string, id uint) (data.User, error)
+	Update(name string, id uint) error
 	Delete(id uint) error
 }

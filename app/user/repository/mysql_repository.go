@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
@@ -17,7 +16,9 @@ const (
 	// CreateQuery to create a new user query
 	CreateQuery = `INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`
 	// FindByIDQuery to get an existing user
-	FindByIDQuery = `SELECT id, name, email FROM users WHERE id = ? LIMIT 1`
+	FindByIDQuery = `SELECT id, name, email FROM users WHERE id = ? AND deleted_at IS NULL LIMIT 1`
+	// UpdateQuery to update an existing user
+	UpdateQuery = `UPDATE users SET name = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`
 )
 
 // MySQLRepository of user repo
@@ -62,7 +63,6 @@ func (repo *MySQLRepository) Create(name, email, password string) (uint, error) 
 	}
 
 	now := time.Now().Format(format.DateTimeToString)
-	fmt.Println(now)
 
 	defer func() {
 		switch err {
@@ -97,8 +97,26 @@ func (repo *MySQLRepository) FindByID(id uint) (data.User, error) {
 }
 
 // Update an existing user
-func (repo *MySQLRepository) Update(name string, id uint) (data.User, error) {
-	return data.User{}, nil
+func (repo *MySQLRepository) Update(name string, id uint) error {
+	tx, err := repo.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	now := time.Now().Format(format.DateTimeToString)
+
+	defer func() {
+		switch err {
+		case nil:
+			err = tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.Exec(UpdateQuery, name, now, id)
+
+	return err
 }
 
 // Delete an existing user

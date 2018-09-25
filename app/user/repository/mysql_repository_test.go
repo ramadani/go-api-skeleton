@@ -112,7 +112,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldReturnErrorWhenFindById() {
 	sqlmock.NewRows([]string{"id", "name", "email"}).
 		AddRow("1", "FooBar", "foo@example.com")
 
-	suite.mock.ExpectQuery(`SELECT (.+) FROM users WHERE id = (.+) LIMIT 1`).
+	suite.mock.ExpectQuery(`SELECT (.+) FROM users WHERE id = (.+) AND deleted_at IS NULL LIMIT 1`).
 		WillReturnError(fmt.Errorf("Not Found"))
 
 	user, err := suite.repo.FindByID(2)
@@ -120,8 +120,32 @@ func (suite *MySqlUserRepoTestSuite) TestShouldReturnErrorWhenFindById() {
 	suite.Equal(data.User{ID: 0, Name: "", Email: ""}, user)
 }
 
-func (suite *MySqlUserRepoTestSuite) TestUpdate() {
-	suite.T().Skip()
+func (suite *MySqlUserRepoTestSuite) TestShouldUpdateUser() {
+	defer suite.db.Close()
+
+	suite.mock.ExpectBegin()
+	now := time.Now().Format(format.DateTimeToString)
+	suite.mock.ExpectExec(`UPDATE users SET (.+) WHERE id = (.) AND deleted_at IS NULL`).
+		WithArgs("BarFoo", now, 1).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.mock.ExpectCommit()
+
+	err := suite.repo.Update("BarFoo", 1)
+	suite.Nil(err)
+}
+
+func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
+	defer suite.db.Close()
+
+	suite.mock.ExpectBegin()
+	now := time.Now().Format(format.DateTimeToString)
+	suite.mock.ExpectExec(`UPDATE users SET (.+) WHERE id = (.) AND deleted_at IS NULL`).
+		WithArgs("BarFoo", now, 1).
+		WillReturnError(fmt.Errorf("cannot update the user"))
+	suite.mock.ExpectRollback()
+
+	err := suite.repo.Update("BarFoo", 1)
+	suite.NotNil(err)
 }
 
 func (suite *MySqlUserRepoTestSuite) TestDelete() {
