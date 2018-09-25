@@ -19,6 +19,8 @@ const (
 	FindByIDQuery = `SELECT id, name, email FROM users WHERE id = ? AND deleted_at IS NULL LIMIT 1`
 	// UpdateQuery to update an existing user
 	UpdateQuery = `UPDATE users SET name = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`
+	// DeleteQuery to delete an existing user
+	DeleteQuery = `DELETE FROM users WHERE id = ? AND deleted_at IS NULL`
 )
 
 // MySQLRepository of user repo
@@ -121,10 +123,26 @@ func (repo *MySQLRepository) Update(name string, id uint) error {
 
 // Delete an existing user
 func (repo *MySQLRepository) Delete(id uint) error {
-	return nil
+	tx, err := repo.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		switch err {
+		case nil:
+			err = tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.Exec(DeleteQuery, id)
+
+	return err
 }
 
 // NewMySQLRepository new mysql user repo
 func NewMySQLRepository(db *sql.DB) *MySQLRepository {
-	return &MySQLRepository{db}
+	return &MySQLRepository{db: db}
 }

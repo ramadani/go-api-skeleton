@@ -148,8 +148,30 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
 	suite.NotNil(err)
 }
 
-func (suite *MySqlUserRepoTestSuite) TestDelete() {
-	suite.T().Skip()
+func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
+	defer suite.db.Close()
+
+	suite.mock.ExpectBegin()
+	suite.mock.ExpectExec(`DELETE FROM users WHERE id = (.) AND deleted_at IS NULL`).
+		WithArgs(1).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	suite.mock.ExpectCommit()
+
+	err := suite.repo.Delete(1)
+	suite.Nil(err)
+}
+
+func (suite *MySqlUserRepoTestSuite) TestShouldRollbackDeleteUserOnFailure() {
+	defer suite.db.Close()
+
+	suite.mock.ExpectBegin()
+	suite.mock.ExpectExec(`DELETE FROM users WHERE id = (.) AND deleted_at IS NULL`).
+		WithArgs(1).
+		WillReturnError(fmt.Errorf("some error"))
+	suite.mock.ExpectRollback()
+
+	err := suite.repo.Delete(1)
+	suite.NotNil(err)
 }
 
 func TestMySqlUserRepoTestSuite(t *testing.T) {
