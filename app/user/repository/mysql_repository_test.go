@@ -48,8 +48,8 @@ func (suite *MySqlUserRepoTestSuite) TestPaginate() {
 	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
 		WillReturnRows(totalRows)
 
-	users, total, uErr := suite.repo.Paginate(0, uint(limit))
-	suite.Nil(uErr)
+	users, total, err := suite.repo.Paginate(0, uint(limit))
+	suite.Nil(err)
 	suite.Equal(uint(limit), total)
 	suite.Equal(limit, len(users))
 }

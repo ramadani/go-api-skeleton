@@ -29,24 +29,24 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 	var total uint
 
 	// get users by given query
-	userRows, pErr := repo.db.Query(PaginateQuery, offset, limit)
-	if pErr != nil {
-		return users, total, pErr
+	userRows, err := repo.db.Query(PaginateQuery, offset, limit)
+	if err != nil {
+		return users, total, err
 	}
 
 	defer userRows.Close()
 	for userRows.Next() {
 		user := data.User{}
-		if rErr := userRows.Scan(&user.ID, &user.Name, &user.Email); rErr != nil {
-			return users, total, rErr
+		if err = userRows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
+			return users, total, err
 		}
 		users = append(users, user)
 	}
 
 	// get total of users by given query
-	totalRows, tErr := repo.db.Query(CountQuery)
-	if tErr != nil {
-		return users, total, tErr
+	totalRows, err := repo.db.Query(CountQuery)
+	if err != nil {
+		return users, total, err
 	}
 
 	defer totalRows.Close()
@@ -59,26 +59,27 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 
 // Create a new user
 func (repo *MySQLRepository) Create(name, email, password string) (data.User, error) {
-	tx, tErr := repo.db.Begin()
-	if tErr != nil {
-		return data.User{}, tErr
+	tx, err := repo.db.Begin()
+	if err != nil {
+		return data.User{}, err
 	}
 
 	now := time.Now().Format(format.DateTimeToString)
 	fmt.Println(now)
-	_, qErr := tx.Exec(CreateQuery, name, email, password, now, now)
 
 	defer func() {
-		switch qErr {
+		switch err {
 		case nil:
-			qErr = tx.Commit()
+			err = tx.Commit()
 		default:
 			tx.Rollback()
 		}
 	}()
 
-	if qErr != nil {
-		return data.User{}, qErr
+	_, err = tx.Exec(CreateQuery, name, email, password, now, now)
+
+	if err != nil {
+		return data.User{}, err
 	}
 
 	return data.User{ID: 1, Name: name, Email: email}, nil
