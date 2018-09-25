@@ -6,6 +6,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/helpers/format"
+	baseRepo "github.com/ramadani/go-api-skeleton/helpers/repository"
 )
 
 const (
@@ -25,6 +26,7 @@ const (
 
 // MySQLRepository of user repo
 type MySQLRepository struct {
+	baseRepo.SQLRepository
 	db *sql.DB
 }
 
@@ -65,18 +67,9 @@ func (repo *MySQLRepository) Create(name, email, password string) (uint, error) 
 	}
 
 	now := time.Now().Format(format.DateTimeToString)
-
-	defer func() {
-		switch err {
-		case nil:
-			err = tx.Commit()
-		default:
-			tx.Rollback()
-		}
-	}()
-
 	res, err := tx.Exec(CreateQuery, name, email, password, now, now)
 
+	defer repo.CommitRollback(tx, err)
 	if err != nil {
 		return 0, err
 	}
@@ -106,17 +99,8 @@ func (repo *MySQLRepository) Update(name string, id uint) error {
 	}
 
 	now := time.Now().Format(format.DateTimeToString)
-
-	defer func() {
-		switch err {
-		case nil:
-			err = tx.Commit()
-		default:
-			tx.Rollback()
-		}
-	}()
-
 	_, err = tx.Exec(UpdateQuery, name, now, id)
+	defer repo.CommitRollback(tx, err)
 
 	return err
 }
@@ -128,16 +112,8 @@ func (repo *MySQLRepository) Delete(id uint) error {
 		return err
 	}
 
-	defer func() {
-		switch err {
-		case nil:
-			err = tx.Commit()
-		default:
-			tx.Rollback()
-		}
-	}()
-
 	_, err = tx.Exec(DeleteQuery, id)
+	defer repo.CommitRollback(tx, err)
 
 	return err
 }
