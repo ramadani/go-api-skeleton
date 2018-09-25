@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/repository"
 	"github.com/ramadani/go-api-skeleton/helpers/format"
 	"github.com/stretchr/testify/suite"
@@ -64,10 +65,9 @@ func (suite *MySqlUserRepoTestSuite) TestShouldCreateNewUser() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.mock.ExpectCommit()
 
-	user, err := suite.repo.Create("FooBar", "foo@example.com", "randomstring")
+	id, err := suite.repo.Create("FooBar", "foo@example.com", "randomstring")
 	suite.Nil(err)
-	suite.Equal(user.Name, "FooBar")
-	suite.Equal(user.Email, "foo@example.com")
+	suite.Equal(true, id > 0)
 
 	err = suite.mock.ExpectationsWereMet()
 	suite.Nil(err)
@@ -91,7 +91,33 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackCreateUserOnFailure() {
 }
 
 func (suite *MySqlUserRepoTestSuite) TestFindById() {
-	suite.T().Skip()
+	defer suite.db.Close()
+
+	userRows := sqlmock.NewRows([]string{"id", "name", "email"}).
+		AddRow("1", "FooBar", "foo@example.com")
+
+	suite.mock.ExpectQuery(`SELECT (.+) FROM users WHERE id = (.+) LIMIT 1`).
+		WillReturnRows(userRows)
+
+	user, err := suite.repo.FindByID(1)
+	suite.Nil(err)
+	suite.Equal(uint(1), user.ID)
+	suite.Equal("FooBar", user.Name)
+	suite.Equal("foo@example.com", user.Email)
+}
+
+func (suite *MySqlUserRepoTestSuite) TestShouldReturnErrorWhenFindById() {
+	defer suite.db.Close()
+
+	sqlmock.NewRows([]string{"id", "name", "email"}).
+		AddRow("1", "FooBar", "foo@example.com")
+
+	suite.mock.ExpectQuery(`SELECT (.+) FROM users WHERE id = (.+) LIMIT 1`).
+		WillReturnError(fmt.Errorf("Not Found"))
+
+	user, err := suite.repo.FindByID(2)
+	suite.NotNil(err)
+	suite.Equal(data.User{ID: 0, Name: "", Email: ""}, user)
 }
 
 func (suite *MySqlUserRepoTestSuite) TestUpdate() {

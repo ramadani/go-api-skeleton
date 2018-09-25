@@ -16,6 +16,8 @@ const (
 	CountQuery = `SELECT COUNT(id) AS total FROM users WHERE deleted_at IS NULL`
 	// CreateQuery to create a new user query
 	CreateQuery = `INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`
+	// FindByIDQuery to get an existing user
+	FindByIDQuery = `SELECT id, name, email FROM users WHERE id = ? LIMIT 1`
 )
 
 // MySQLRepository of user repo
@@ -44,24 +46,19 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 	}
 
 	// get total of users by given query
-	totalRows, err := repo.db.Query(CountQuery)
+	err = repo.db.QueryRow(CountQuery).Scan(&total)
 	if err != nil {
 		return users, total, err
-	}
-
-	defer totalRows.Close()
-	for totalRows.Next() {
-		totalRows.Scan(&total)
 	}
 
 	return users, total, nil
 }
 
 // Create a new user
-func (repo *MySQLRepository) Create(name, email, password string) (data.User, error) {
+func (repo *MySQLRepository) Create(name, email, password string) (uint, error) {
 	tx, err := repo.db.Begin()
 	if err != nil {
-		return data.User{}, err
+		return 0, err
 	}
 
 	now := time.Now().Format(format.DateTimeToString)
@@ -76,18 +73,27 @@ func (repo *MySQLRepository) Create(name, email, password string) (data.User, er
 		}
 	}()
 
-	_, err = tx.Exec(CreateQuery, name, email, password, now, now)
+	res, err := tx.Exec(CreateQuery, name, email, password, now, now)
 
 	if err != nil {
-		return data.User{}, err
+		return 0, err
 	}
 
-	return data.User{ID: 1, Name: name, Email: email}, nil
+	id, _ := res.LastInsertId()
+
+	return uint(id), nil
 }
 
 // FindByID to find user by id
 func (repo *MySQLRepository) FindByID(id uint) (data.User, error) {
-	return data.User{}, nil
+	var user data.User
+
+	err := repo.db.QueryRow(FindByIDQuery, id).Scan(&user.ID, &user.Name, &user.Email)
+	if err != nil {
+		return data.User{}, err
+	}
+
+	return user, nil
 }
 
 // Update an existing user
