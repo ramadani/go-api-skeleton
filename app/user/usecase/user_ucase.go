@@ -32,8 +32,11 @@ func (ucase *UserUsecase) Paginate(page, limit uint) (data.UserPaginate, error) 
 // Create a new user
 func (ucase *UserUsecase) Create(name, email, password string) (data.User, error) {
 	id, err := ucase.repo.Create(name, email, password)
-	user, err := ucase.repo.FindByID(id)
+	if err != nil {
+		return data.User{}, err
+	}
 
+	user, err := ucase.repo.FindByID(id)
 	return user, err
 }
 
@@ -47,8 +50,11 @@ func (ucase *UserUsecase) FindByID(id uint) (data.User, error) {
 // Update an existing user
 func (ucase *UserUsecase) Update(name string, id uint) (data.User, error) {
 	err := ucase.repo.Update(name, id)
-	user, err := ucase.FindByID(id)
+	if err != nil {
+		return data.User{}, err
+	}
 
+	user, err := ucase.FindByID(id)
 	return user, err
 }
 

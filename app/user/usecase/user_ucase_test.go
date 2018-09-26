@@ -68,6 +68,21 @@ func (suite *UserUsecaseTestSuite) TestCreate() {
 	suite.Equal(id, user.ID)
 }
 
+func (suite *UserUsecaseTestSuite) TestCreateFailed() {
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(0)
+	name, email, password := "FooBar", "foo@example.com", "randomstring"
+
+	repo.On("Create", name, email, password).Return(id, fmt.Errorf("some error")).Once()
+
+	_, err := suite.usecase.Create(name, email, password)
+	suite.NotNil(err)
+}
+
 func (suite *UserUsecaseTestSuite) TestFindById() {
 	repo := new(mocks.Repository)
 	suite.createUsecaseInstance(usecase.New(repo))
@@ -84,6 +99,20 @@ func (suite *UserUsecaseTestSuite) TestFindById() {
 	suite.Equal(name, user.Name)
 	suite.Equal(email, user.Email)
 	suite.Equal(id, user.ID)
+}
+
+func (suite *UserUsecaseTestSuite) TestFindByIdNotFound() {
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	repo.On("FindByID", id).Return(data.User{}, fmt.Errorf("not found")).Once()
+
+	user, err := suite.usecase.FindByID(id)
+	suite.NotNil(err)
+	suite.Equal(data.User{}, user)
 }
 
 func (suite *UserUsecaseTestSuite) TestUpdate() {
@@ -103,6 +132,20 @@ func (suite *UserUsecaseTestSuite) TestUpdate() {
 	suite.Equal(name, user.Name)
 	suite.Equal(email, user.Email)
 	suite.Equal(id, user.ID)
+}
+
+func (suite *UserUsecaseTestSuite) TestUpdateFailed() {
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	repo.On("Update", "foobar", id).Return(fmt.Errorf("update failed")).Once()
+
+	user, err := suite.usecase.Update("foobar", id)
+	suite.NotNil(err)
+	suite.Equal(data.User{}, user)
 }
 
 func (suite *UserUsecaseTestSuite) TestDelete() {
