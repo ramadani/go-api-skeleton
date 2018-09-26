@@ -50,12 +50,21 @@ func (suite *UserUsecaseTestSuite) TestPaginate() {
 }
 
 func (suite *UserUsecaseTestSuite) TestCreate() {
-	suite.T().Skip()
-	userData, err := suite.usecase.Create("User Fullname", "foo@example.com", "randomString")
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	name, email, password := "FooBar", "foo@example.com", "randomstring"
+	repo.On("Create", name, email, password).Return(id, nil).Once()
+	repo.On("FindByID", id).Return(data.User{ID: id, Name: name, Email: email}, nil).Once()
+
+	user, err := suite.usecase.Create(name, email, password)
 	suite.Nil(err)
-	suite.NotEmpty(userData)
-	suite.Equal("User Fullname", userData.Name)
-	suite.Equal("foo@example.com", userData.Email)
+	suite.Equal(name, user.Name)
+	suite.Equal(email, user.Email)
+	suite.Equal(uint(1), user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestFindById() {

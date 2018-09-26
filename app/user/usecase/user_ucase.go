@@ -31,13 +31,10 @@ func (ucase *UserUsecase) Paginate(page, limit uint) (data.UserPaginate, error) 
 
 // Create a new user
 func (ucase *UserUsecase) Create(name, email, password string) (data.User, error) {
-	user := data.User{
-		ID:    1,
-		Name:  name,
-		Email: email,
-	}
+	id, err := ucase.repo.Create(name, email, password)
+	user, err := ucase.repo.FindByID(id)
 
-	return user, nil
+	return user, err
 }
 
 // FindByID for existing user in the storage
