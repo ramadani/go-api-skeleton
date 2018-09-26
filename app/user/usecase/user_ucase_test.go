@@ -65,7 +65,7 @@ func (suite *UserUsecaseTestSuite) TestCreate() {
 	suite.Nil(err)
 	suite.Equal(name, user.Name)
 	suite.Equal(email, user.Email)
-	suite.Equal(uint(1), user.ID)
+	suite.Equal(id, user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestFindById() {
@@ -83,7 +83,7 @@ func (suite *UserUsecaseTestSuite) TestFindById() {
 	suite.Nil(err)
 	suite.Equal(name, user.Name)
 	suite.Equal(email, user.Email)
-	suite.Equal(uint(1), user.ID)
+	suite.Equal(id, user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestUpdate() {
@@ -102,7 +102,7 @@ func (suite *UserUsecaseTestSuite) TestUpdate() {
 	suite.Nil(err)
 	suite.Equal(name, user.Name)
 	suite.Equal(email, user.Email)
-	suite.Equal(uint(1), user.ID)
+	suite.Equal(id, user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestDelete() {
@@ -117,6 +117,7 @@ func (suite *UserUsecaseTestSuite) TestDelete() {
 	err := suite.usecase.Delete(id)
 	suite.Nil(err)
 }
+
 func TestUserUsecaseTestSuite(t *testing.T) {
 	suite.Run(t, new(UserUsecaseTestSuite))
 }
