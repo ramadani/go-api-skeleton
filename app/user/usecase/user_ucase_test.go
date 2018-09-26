@@ -57,6 +57,7 @@ func (suite *UserUsecaseTestSuite) TestCreate() {
 
 	id := uint(1)
 	name, email, password := "FooBar", "foo@example.com", "randomstring"
+
 	repo.On("Create", name, email, password).Return(id, nil).Once()
 	repo.On("FindByID", id).Return(data.User{ID: id, Name: name, Email: email}, nil).Once()
 
@@ -68,23 +69,52 @@ func (suite *UserUsecaseTestSuite) TestCreate() {
 }
 
 func (suite *UserUsecaseTestSuite) TestFindById() {
-	suite.T().Skip()
-	userData, err := suite.usecase.FindByID(1)
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	name, email := "FooBar", "foo@example.com"
+
+	repo.On("FindByID", id).Return(data.User{ID: id, Name: name, Email: email}, nil).Once()
+
+	user, err := suite.usecase.FindByID(id)
 	suite.Nil(err)
-	suite.NotEmpty(userData)
+	suite.Equal(name, user.Name)
+	suite.Equal(email, user.Email)
+	suite.Equal(uint(1), user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestUpdate() {
-	suite.T().Skip()
-	userData, err := suite.usecase.Update("FooBar", 1)
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	name, email := "FooBar", "foo@example.com"
+
+	repo.On("Update", name, id).Return(nil).Once()
+	repo.On("FindByID", id).Return(data.User{ID: id, Name: name, Email: email}, nil).Once()
+
+	user, err := suite.usecase.Update(name, id)
 	suite.Nil(err)
-	suite.NotEmpty(userData)
-	suite.Equal("FooBar", userData.Name)
+	suite.Equal(name, user.Name)
+	suite.Equal(email, user.Email)
+	suite.Equal(uint(1), user.ID)
 }
 
 func (suite *UserUsecaseTestSuite) TestDelete() {
-	suite.T().Skip()
-	err := suite.usecase.Delete(1)
+	repo := new(mocks.Repository)
+	suite.createUsecaseInstance(usecase.New(repo))
+
+	defer repo.AssertExpectations(suite.T())
+
+	id := uint(1)
+	repo.On("Delete", id).Return(nil).Once()
+
+	err := suite.usecase.Delete(id)
 	suite.Nil(err)
 }
 func TestUserUsecaseTestSuite(t *testing.T) {

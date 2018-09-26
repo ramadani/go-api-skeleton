@@ -39,29 +39,24 @@ func (ucase *UserUsecase) Create(name, email, password string) (data.User, error
 
 // FindByID for existing user in the storage
 func (ucase *UserUsecase) FindByID(id uint) (data.User, error) {
-	user := data.User{
-		ID:    1,
-		Name:  "Ramadani",
-		Email: "email.ramadani@gmail.com",
-	}
+	user, err := ucase.repo.FindByID(id)
 
-	return user, nil
+	return user, err
 }
 
 // Update an existing user
 func (ucase *UserUsecase) Update(name string, id uint) (data.User, error) {
-	user := data.User{
-		ID:    id,
-		Name:  name,
-		Email: "email.ramadani@gmail.com",
-	}
+	err := ucase.repo.Update(name, id)
+	user, err := ucase.FindByID(id)
 
-	return user, nil
+	return user, err
 }
 
 // Delete a user by id
 func (ucase *UserUsecase) Delete(id uint) error {
-	return nil
+	err := ucase.repo.Delete(id)
+
+	return err
 }
 
 // New user usecase
