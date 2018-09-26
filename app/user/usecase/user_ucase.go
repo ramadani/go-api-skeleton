@@ -1,34 +1,32 @@
 package usecase
 
-import "github.com/ramadani/go-api-skeleton/app/user/data"
+import (
+	"math"
+
+	"github.com/ramadani/go-api-skeleton/app/user/data"
+	"github.com/ramadani/go-api-skeleton/app/user/repository"
+)
 
 // UserUsecase contain the dependencies of user use case
-type UserUsecase struct{}
+type UserUsecase struct {
+	repo repository.Repository
+}
 
 // Paginate the user collection
-func (ucase *UserUsecase) Paginate(page, limit int) (data.UserPaginate, error) {
-	users := []data.User{
-		data.User{
-			ID:    1,
-			Name:  "Ramadani",
-			Email: "email.ramadani@gmail.com",
-		},
-		data.User{
-			ID:    2,
-			Name:  "Example",
-			Email: "email.example@gmail.com",
-		},
-	}
+func (ucase *UserUsecase) Paginate(page, limit uint) (data.UserPaginate, error) {
+	offset := (page - 1) * limit
+	users, total, err := ucase.repo.Paginate(offset, limit)
+	pages := math.Ceil(float64(total / limit))
 
-	pagination := data.UserPaginate{
+	userPaginate := data.UserPaginate{
 		Data:    users,
-		Total:   int64(len(users)),
+		Total:   total,
 		PerPage: limit,
 		Page:    page,
-		Pages:   10,
+		Pages:   uint(pages),
 	}
 
-	return pagination, nil
+	return userPaginate, err
 }
 
 // Create a new user
@@ -43,7 +41,7 @@ func (ucase *UserUsecase) Create(name, email, password string) (data.User, error
 }
 
 // FindByID for existing user in the storage
-func (ucase *UserUsecase) FindByID(id int64) (data.User, error) {
+func (ucase *UserUsecase) FindByID(id uint) (data.User, error) {
 	user := data.User{
 		ID:    1,
 		Name:  "Ramadani",
@@ -54,7 +52,7 @@ func (ucase *UserUsecase) FindByID(id int64) (data.User, error) {
 }
 
 // Update an existing user
-func (ucase *UserUsecase) Update(name string, id int64) (data.User, error) {
+func (ucase *UserUsecase) Update(name string, id uint) (data.User, error) {
 	user := data.User{
 		ID:    id,
 		Name:  name,
@@ -65,11 +63,11 @@ func (ucase *UserUsecase) Update(name string, id int64) (data.User, error) {
 }
 
 // Delete a user by id
-func (ucase *UserUsecase) Delete(id int64) error {
+func (ucase *UserUsecase) Delete(id uint) error {
 	return nil
 }
 
 // New user usecase
-func New() *UserUsecase {
-	return &UserUsecase{}
+func New(repo repository.Repository) *UserUsecase {
+	return &UserUsecase{repo: repo}
 }
