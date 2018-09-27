@@ -3,7 +3,7 @@ package route
 import (
 	"net/http"
 
-	"github.com/ramadani/go-api-skeleton/helpers/handler"
+	"github.com/ramadani/go-api-skeleton/commons/handler"
 )
 
 // Handler of welcome routes

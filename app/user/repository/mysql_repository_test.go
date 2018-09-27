@@ -8,7 +8,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/repository"
-	"github.com/ramadani/go-api-skeleton/helpers/format"
+	"github.com/ramadani/go-api-skeleton/commons/format"
 	"github.com/stretchr/testify/suite"
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )

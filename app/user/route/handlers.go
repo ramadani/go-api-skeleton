@@ -5,7 +5,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/app/user/usecase"
 
-	"github.com/ramadani/go-api-skeleton/helpers/handler"
+	"github.com/ramadani/go-api-skeleton/commons/handler"
 )
 
 // Handler contains deps
