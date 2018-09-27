@@ -45,7 +45,7 @@ func (suite *UserRouteTestSuite) TestIndexRoute() {
 
 	ucase.On("Paginate", page, limit).Return(userPaginate, nil).Once()
 
-	handler := http.HandlerFunc(suite.handlers.Index())
+	handler := http.HandlerFunc(suite.handlers.Index)
 	handler.ServeHTTP(suite.rr, req)
 	exceptedBody, _ := json.Marshal(hl.ResponseData{Data: userPaginate})
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())
@@ -68,7 +68,7 @@ func (suite *UserRouteTestSuite) TestIndexRouteOnFailed() {
 	ucase.On("Paginate", page, limit).Return(data.UserPaginate{}, fmt.Errorf("internal server error")).Once()
 	resErr := hl.ResponseError{Message: "internal server error"}
 
-	handler := http.HandlerFunc(suite.handlers.Index())
+	handler := http.HandlerFunc(suite.handlers.Index)
 	handler.ServeHTTP(suite.rr, req)
 	exceptedBody, _ := json.Marshal(hl.ResponseData{Data: resErr})
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())

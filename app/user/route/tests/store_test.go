@@ -33,7 +33,7 @@ func (suite *UserRouteTestSuite) TestStore() {
 	user := data.User{ID: 1, Name: "FooBar", Email: "foo@example.com"}
 	ucase.On("Create", "FooBar", "foo@example.com", "secret").Return(user, nil).Once()
 
-	handler := http.HandlerFunc(suite.handlers.Store())
+	handler := http.HandlerFunc(suite.handlers.Store)
 	handler.ServeHTTP(suite.rr, req)
 	expectedBody, _ := json.Marshal(hl.ResponseData{Data: user})
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
@@ -60,7 +60,7 @@ func (suite *UserRouteTestSuite) TestStoreFailed() {
 	createErr := errors.New("cannot create a new user")
 	ucase.On("Create", "FooBar", "foo@example.com", "secret").Return(user, createErr).Once()
 
-	handler := http.HandlerFunc(suite.handlers.Store())
+	handler := http.HandlerFunc(suite.handlers.Store)
 	handler.ServeHTTP(suite.rr, req)
 	expectedBody, _ := json.Marshal(hl.ResponseData{Data: hl.ResponseError{Message: createErr.Error()}})
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
