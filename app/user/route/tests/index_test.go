@@ -12,6 +12,11 @@ import (
 )
 
 func (suite *UserRouteTestSuite) TestIndexRoute() {
+	ucase := new(mocks.Usecase)
+	suite.handlers = route.NewHandler(ucase)
+
+	defer ucase.AssertExpectations(suite.T())
+
 	var page, limit, total uint
 	page = 1
 	limit = 10
@@ -21,11 +26,6 @@ func (suite *UserRouteTestSuite) TestIndexRoute() {
 
 	req, err := http.NewRequest(http.MethodGet, uri, nil)
 	suite.Nil(err)
-
-	ucase := new(mocks.Usecase)
-	suite.handlers = route.NewHandler(ucase)
-
-	defer ucase.AssertExpectations(suite.T())
 
 	for i := uint(0); i < limit; i++ {
 		users[i] = data.User{
@@ -53,17 +53,17 @@ func (suite *UserRouteTestSuite) TestIndexRoute() {
 }
 
 func (suite *UserRouteTestSuite) TestIndexRouteOnFailed() {
+	ucase := new(mocks.Usecase)
+	suite.handlers = route.NewHandler(ucase)
+
+	defer ucase.AssertExpectations(suite.T())
+
 	var page, limit uint
 	page = 1
 	limit = 10
 
 	req, err := http.NewRequest(http.MethodGet, "/users", nil)
 	suite.Nil(err)
-
-	ucase := new(mocks.Usecase)
-	suite.handlers = route.NewHandler(ucase)
-
-	defer ucase.AssertExpectations(suite.T())
 
 	ucase.On("Paginate", page, limit).Return(data.UserPaginate{}, fmt.Errorf("internal server error")).Once()
 	resErr := hl.ResponseError{Message: "internal server error"}

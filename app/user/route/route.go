@@ -17,4 +17,5 @@ func New(router *mux.Router, db *sql.DB) {
 	handler := NewHandler(ucase)
 
 	router.HandleFunc("/users", handler.Index()).Methods(http.MethodGet)
+	router.HandleFunc("/users", handler.Store()).Methods(http.MethodPost)
 }
