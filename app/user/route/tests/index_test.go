@@ -1,29 +1,15 @@
-package route_test
+package tests
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
-	"testing"
-
-	"github.com/stretchr/testify/suite"
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase/mocks"
 	hl "github.com/ramadani/go-api-skeleton/commons/handler"
 )
-
-type UserRouteTestSuite struct {
-	suite.Suite
-	rr       *httptest.ResponseRecorder
-	handlers *route.Handler
-}
-
-func (suite *UserRouteTestSuite) SetupTest() {
-	suite.rr = httptest.NewRecorder()
-}
 
 func (suite *UserRouteTestSuite) TestIndexRoute() {
 	var page, limit, total uint
@@ -87,8 +73,4 @@ func (suite *UserRouteTestSuite) TestIndexRouteOnFailed() {
 	exceptedBody, _ := json.Marshal(hl.ResponseData{Data: resErr})
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
-}
-
-func TestUserRouteTestSuite(t *testing.T) {
-	suite.Run(t, new(UserRouteTestSuite))
 }
