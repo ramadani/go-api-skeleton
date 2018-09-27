@@ -20,8 +20,8 @@ const (
 	FindByIDQuery = `SELECT id, name, email FROM users WHERE id = ? AND deleted_at IS NULL LIMIT 1`
 	// UpdateQuery to update an existing user
 	UpdateQuery = `UPDATE users SET name = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`
-	// DeleteQuery to delete an existing user
-	DeleteQuery = `DELETE FROM users WHERE id = ? AND deleted_at IS NULL`
+	// SoftDeleteQuery to delete an existing user
+	SoftDeleteQuery = `UPDATE users SET deleted_at = ? WHERE id = ?`
 )
 
 // MySQLRepository of user repo
@@ -112,7 +112,8 @@ func (repo *MySQLRepository) Delete(id uint) error {
 		return err
 	}
 
-	_, err = tx.Exec(DeleteQuery, id)
+	now := time.Now().Format(format.DateTimeToString)
+	_, err = tx.Exec(SoftDeleteQuery, now, id)
 	defer repo.DoTx(tx, err)
 
 	return err
