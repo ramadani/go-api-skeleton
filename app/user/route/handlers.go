@@ -2,6 +2,7 @@ package route
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ramadani/go-api-skeleton/app/user/usecase"
 
@@ -17,9 +18,17 @@ type Handler struct {
 // Index of user handlers
 func (h *Handler) Index() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		res, err := h.ucase.Paginate(uint(1), uint(10))
+		page := 1
+		limit := 10
+
+		if qPage := r.URL.Query().Get("page"); qPage != "" {
+			page, _ = strconv.Atoi(qPage)
+		}
+
+		res, err := h.ucase.Paginate(uint(page), uint(limit))
 		if err != nil {
 			h.Response.Fail(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		h.Response.JSON(w, res, http.StatusOK)
