@@ -14,7 +14,7 @@ import (
 
 func (suite *UserRouteTestSuite) TestFind() {
 	ucase := new(mocks.Usecase)
-	suite.handlers = route.NewHandler(ucase)
+	handlers := route.NewHandler(ucase)
 
 	defer ucase.AssertExpectations(suite.T())
 
@@ -26,7 +26,7 @@ func (suite *UserRouteTestSuite) TestFind() {
 	ucase.On("FindByID", id).Return(user, nil).Once()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		suite.handlers.Find(w, r, id)
+		handlers.Find(w, r, id)
 	})
 	handler.ServeHTTP(suite.rr, req)
 	expectedBody, _ := json.Marshal(hl.ResponseData{Data: user})
@@ -36,7 +36,7 @@ func (suite *UserRouteTestSuite) TestFind() {
 
 func (suite *UserRouteTestSuite) TestFindNotFound() {
 	ucase := new(mocks.Usecase)
-	suite.handlers = route.NewHandler(ucase)
+	handlers := route.NewHandler(ucase)
 
 	defer ucase.AssertExpectations(suite.T())
 
@@ -49,7 +49,7 @@ func (suite *UserRouteTestSuite) TestFindNotFound() {
 	ucase.On("FindByID", id).Return(user, findErr).Once()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		suite.handlers.Find(w, r, id)
+		handlers.Find(w, r, id)
 	})
 	handler.ServeHTTP(suite.rr, req)
 	expectedBody, _ := json.Marshal(hl.ResponseData{

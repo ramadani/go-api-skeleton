@@ -5,14 +5,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
-
-	"github.com/ramadani/go-api-skeleton/app/user/route"
 )
 
 type UserRouteTestSuite struct {
 	suite.Suite
-	rr       *httptest.ResponseRecorder
-	handlers *route.Handler
+	rr *httptest.ResponseRecorder
 }
 
 func (suite *UserRouteTestSuite) SetupTest() {
