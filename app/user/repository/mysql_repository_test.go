@@ -43,13 +43,13 @@ func (suite *MySqlUserRepoTestSuite) TestPaginate() {
 		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
 	}
 
-	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
-		WithArgs(0, limit).
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) LIMIT (.?) OFFSET (.?)`).
+		WithArgs(limit, 0).
 		WillReturnRows(userRows)
 	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
 		WillReturnRows(totalRows)
 
-	users, total, err := suite.repo.Paginate(0, uint(limit))
+	users, total, err := suite.repo.Paginate(uint(limit), 0)
 	suite.Nil(err)
 	suite.Equal(uint(limit), total)
 	suite.Equal(limit, len(users))
@@ -66,13 +66,13 @@ func (suite *MySqlUserRepoTestSuite) TestPaginateOnFailure() {
 		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
 	}
 
-	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
-		WithArgs(0, limit).
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) LIMIT (.?) OFFSET (.?)`).
+		WithArgs(limit, 0).
 		WillReturnError(fmt.Errorf("some error"))
 	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
 		WillReturnRows(totalRows)
 
-	users, total, err := suite.repo.Paginate(0, uint(limit))
+	users, total, err := suite.repo.Paginate(uint(limit), 0)
 	suite.NotNil(err)
 	suite.Equal(uint(0), total)
 	suite.Equal(0, len(users))
@@ -88,13 +88,13 @@ func (suite *MySqlUserRepoTestSuite) TestPaginateOnFailureGetTotal() {
 		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
 	}
 
-	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
-		WithArgs(0, limit).
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) LIMIT (.?) OFFSET (.?)`).
+		WithArgs(limit, 0).
 		WillReturnError(fmt.Errorf("some error"))
 	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
 		WillReturnError(fmt.Errorf("some error"))
 
-	users, total, err := suite.repo.Paginate(0, uint(limit))
+	users, total, err := suite.repo.Paginate(uint(limit), 0)
 	suite.NotNil(err)
 	suite.Equal(uint(0), total)
 	suite.Equal(0, len(users))

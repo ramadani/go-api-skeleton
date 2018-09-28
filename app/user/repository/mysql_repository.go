@@ -30,7 +30,7 @@ type MySQLRepository struct {
 }
 
 // Paginate user from mysql
-func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, error) {
+func (repo *MySQLRepository) Paginate(limit, offset uint) ([]data.User, uint, error) {
 	var users []data.User
 	var total uint
 
