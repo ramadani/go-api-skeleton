@@ -50,11 +50,7 @@ func (res *Response) Fail(msg string, statusCode int) {
 
 // ValidationError response with json format
 func (res *Response) ValidationError(errors interface{}, statusCode int) {
-	valErrors := ResponseValidationError{
-		Message: "validation_errors",
-		Errors:  errors,
-	}
-	result, _ := json.Marshal(Data(valErrors))
+	result, _ := json.Marshal(Data(ValidationError(errors)))
 
 	res.w.Header().Set("Content-Type", "application/json")
 	res.w.WriteHeader(statusCode)
@@ -69,6 +65,14 @@ func Data(data interface{}) ResponseData {
 // Error wrapper
 func Error(data string) ResponseError {
 	return ResponseError{data}
+}
+
+// ValidationError wrapper
+func ValidationError(errors interface{}) ResponseValidationError {
+	return ResponseValidationError{
+		Message: "validation_errors",
+		Errors:  errors,
+	}
 }
 
 // NewResponse instance

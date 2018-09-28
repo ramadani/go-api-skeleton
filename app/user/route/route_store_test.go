@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ramadani/go-api-skeleton/app/user/validators"
+
 	"github.com/gorilla/mux"
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
@@ -70,4 +72,53 @@ func (suite *UserRouteTestSuite) TestStoreFailed() {
 	expectedBody, _ := json.Marshal(res.Data(res.Error(createErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
+}
+
+func (suite *UserRouteTestSuite) TestUserInputRequiredOnStore() {
+	ucase := new(mocks.Usecase)
+	handlers := route.NewHandler(ucase)
+
+	defer ucase.AssertExpectations(suite.T())
+
+	input := url.Values{}
+
+	req, err := http.NewRequest(http.MethodPost, "/users", strings.NewReader(input.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(input.Encode())))
+	suite.Nil(err)
+
+	router := mux.NewRouter()
+	router.HandleFunc("/users", handlers.Store).Methods(http.MethodPost)
+	router.ServeHTTP(suite.rr, req)
+
+	errs := validators.NewValidator().Store(data.UserInput{})
+	expectedBody, _ := json.Marshal(res.Data(res.ValidationError(errs)))
+	suite.Equal(string(expectedBody), suite.rr.Body.String())
+	suite.Equal(http.StatusBadRequest, suite.rr.Code)
+}
+
+func (suite *UserRouteTestSuite) TestEmailMustValidOnStore() {
+	ucase := new(mocks.Usecase)
+	handlers := route.NewHandler(ucase)
+
+	defer ucase.AssertExpectations(suite.T())
+
+	input := url.Values{}
+	input.Add("name", "FooBar")
+	input.Add("email", "foo")
+	input.Add("password", "secret")
+
+	req, err := http.NewRequest(http.MethodPost, "/users", strings.NewReader(input.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(input.Encode())))
+	suite.Nil(err)
+
+	router := mux.NewRouter()
+	router.HandleFunc("/users", handlers.Store).Methods(http.MethodPost)
+	router.ServeHTTP(suite.rr, req)
+
+	errs := validators.NewValidator().Store(data.UserInput{Name: "FooBar", Email: "foo", Password: "secret"})
+	expectedBody, _ := json.Marshal(res.Data(res.ValidationError(errs)))
+	suite.Equal(string(expectedBody), suite.rr.Body.String())
+	suite.Equal(http.StatusBadRequest, suite.rr.Code)
 }
