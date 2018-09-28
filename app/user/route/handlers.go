@@ -115,6 +115,21 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	res.JSON(user, http.StatusOK)
 }
 
+// Delete user by given id
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	message := res.Message
+	res := res.NewResponse(w)
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	err := h.ucase.Delete(uint(id))
+	if err != nil {
+		res.Fail(err.Error(), http.StatusNotFound)
+		return
+	}
+
+	res.JSON(message("user has been deleted"), http.StatusOK)
+}
+
 // NewHandler user
 func NewHandler(ucase usecase.Usecase) *Handler {
 	return &Handler{ucase: ucase}
