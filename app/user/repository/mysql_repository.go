@@ -65,7 +65,7 @@ func (repo *MySQLRepository) Create(name, email, password string) (uint, error) 
 		return 0, err
 	}
 
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().UTC().Format(format.DateTimeToString)
 	res, err := tx.Exec(CreateQuery, name, email, password, now, now)
 
 	defer sqlutils.DoTx(tx, err)
@@ -97,7 +97,7 @@ func (repo *MySQLRepository) Update(name string, id uint) error {
 		return err
 	}
 
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().UTC().Format(format.DateTimeToString)
 	_, err = tx.Exec(UpdateQuery, name, now, id)
 	defer sqlutils.DoTx(tx, err)
 
@@ -111,7 +111,7 @@ func (repo *MySQLRepository) Delete(id uint) error {
 		return err
 	}
 
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	_, err = tx.Exec(SoftDeleteQuery, now, id)
 	defer sqlutils.DoTx(tx, err)
 

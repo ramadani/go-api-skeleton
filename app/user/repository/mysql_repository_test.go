@@ -104,7 +104,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldCreateNewUser() {
 	defer suite.db.Close()
 
 	suite.mock.ExpectBegin()
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectExec(`INSERT INTO users (.+) VALUES (.+)`).
 		WithArgs("FooBar", "foo@example.com", "randomstring", now, now).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -122,7 +122,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackCreateUserOnFailure() {
 	defer suite.db.Close()
 
 	suite.mock.ExpectBegin()
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectExec(`INSERT INTO users (.+) VALUES (.+)`).
 		WithArgs("FooBar", "foo@example.com", "randomstring", now, now).
 		WillReturnError(fmt.Errorf("Some error"))
@@ -169,7 +169,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldUpdateUser() {
 	defer suite.db.Close()
 
 	suite.mock.ExpectBegin()
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectExec(`UPDATE users SET (.+) WHERE id = (.) AND deleted_at IS NULL`).
 		WithArgs("BarFoo", now, 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -186,7 +186,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
 	defer suite.db.Close()
 
 	suite.mock.ExpectBegin()
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectExec(`UPDATE users SET (.+) WHERE id = (.) AND deleted_at IS NULL`).
 		WithArgs("BarFoo", now, 1).
 		WillReturnError(fmt.Errorf("cannot update the user"))
@@ -202,7 +202,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackUpdateUserOnFailure() {
 func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
 	defer suite.db.Close()
 
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectBegin()
 	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.)`).
 		WithArgs(now, 1).
@@ -219,7 +219,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
 func (suite *MySqlUserRepoTestSuite) TestShouldRollbackDeleteUserOnFailure() {
 	defer suite.db.Close()
 
-	now := time.Now().Format(format.DateTimeToString)
+	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectBegin()
 	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.)`).
 		WithArgs(now, 1).
