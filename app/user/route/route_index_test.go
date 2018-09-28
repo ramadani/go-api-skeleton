@@ -71,7 +71,7 @@ func (suite *UserRouteTestSuite) TestIndexRouteOnFailed() {
 
 	handler := http.HandlerFunc(handlers.Index)
 	handler.ServeHTTP(suite.rr, req)
-	exceptedBody, _ := json.Marshal(res.Data(res.Error(indexErr.Error())))
+	exceptedBody, _ := json.Marshal(res.Data(res.Message(indexErr.Error())))
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
 }

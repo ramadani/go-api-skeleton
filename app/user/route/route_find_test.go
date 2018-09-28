@@ -53,7 +53,7 @@ func (suite *UserRouteTestSuite) TestFindNotFound() {
 	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find).Methods(http.MethodGet)
 	router.ServeHTTP(suite.rr, req)
 
-	expectedBody, _ := json.Marshal(res.Data(res.Error(findErr.Error())))
+	expectedBody, _ := json.Marshal(res.Data(res.Message(findErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusNotFound, suite.rr.Code)
 }

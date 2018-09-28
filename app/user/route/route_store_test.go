@@ -69,7 +69,7 @@ func (suite *UserRouteTestSuite) TestStoreFailed() {
 	router.HandleFunc("/users", handlers.Store).Methods(http.MethodPost)
 	router.ServeHTTP(suite.rr, req)
 
-	expectedBody, _ := json.Marshal(res.Data(res.Error(createErr.Error())))
+	expectedBody, _ := json.Marshal(res.Data(res.Message(createErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
 }

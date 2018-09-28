@@ -64,7 +64,7 @@ func (suite *UserRouteTestSuite) TestUpdateFailed() {
 	router.HandleFunc("/users/{id:[0-9]+}", handlers.Update).Methods(http.MethodPut)
 	router.ServeHTTP(suite.rr, req)
 
-	expectedBody, _ := json.Marshal(res.Data(res.Error(updateErr.Error())))
+	expectedBody, _ := json.Marshal(res.Data(res.Message(updateErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
 }

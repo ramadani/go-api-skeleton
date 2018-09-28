@@ -15,8 +15,8 @@ type ResponseData struct {
 	Data interface{} `json:"data"`
 }
 
-// ResponseError for json response success
-type ResponseError struct {
+// ResponseMsg for json response success
+type ResponseMsg struct {
 	Message string `json:"message"`
 }
 
@@ -41,7 +41,7 @@ func (res *Response) JSON(data interface{}, statusCode int) {
 
 // Fail response with json format
 func (res *Response) Fail(msg string, statusCode int) {
-	result, _ := json.Marshal(Data(Error(msg)))
+	result, _ := json.Marshal(Data(Message(msg)))
 
 	res.w.Header().Set("Content-Type", "application/json")
 	res.w.WriteHeader(statusCode)
@@ -62,9 +62,9 @@ func Data(data interface{}) ResponseData {
 	return ResponseData{data}
 }
 
-// Error wrapper
-func Error(data string) ResponseError {
-	return ResponseError{data}
+// Message wrapper
+func Message(data string) ResponseMsg {
+	return ResponseMsg{data}
 }
 
 // ValidationError wrapper
