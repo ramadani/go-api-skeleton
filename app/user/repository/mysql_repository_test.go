@@ -55,6 +55,51 @@ func (suite *MySqlUserRepoTestSuite) TestPaginate() {
 	suite.Equal(limit, len(users))
 }
 
+func (suite *MySqlUserRepoTestSuite) TestPaginateOnFailure() {
+	defer suite.db.Close()
+
+	limit := 10
+	userRows := sqlmock.NewRows([]string{"id", "name", "email"})
+	totalRows := sqlmock.NewRows([]string{"total"}).AddRow(limit)
+
+	for i := 1; i <= limit; i++ {
+		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
+	}
+
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
+		WithArgs(0, limit).
+		WillReturnError(fmt.Errorf("some error"))
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
+		WillReturnRows(totalRows)
+
+	users, total, err := suite.repo.Paginate(0, uint(limit))
+	suite.NotNil(err)
+	suite.Equal(uint(0), total)
+	suite.Equal(0, len(users))
+}
+
+func (suite *MySqlUserRepoTestSuite) TestPaginateOnFailureGetTotal() {
+	defer suite.db.Close()
+
+	limit := 10
+	userRows := sqlmock.NewRows([]string{"id", "name", "email"})
+
+	for i := 1; i <= limit; i++ {
+		userRows.AddRow(i, fmt.Sprintf("User Fullname %d", i), fmt.Sprintf("user%d@mail.com", i))
+	}
+
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+) OFFSET (.?) LIMIT (.?)`).
+		WithArgs(0, limit).
+		WillReturnError(fmt.Errorf("some error"))
+	suite.mock.ExpectQuery(`^SELECT (.+) FROM users WHERE (.+)`).
+		WillReturnError(fmt.Errorf("some error"))
+
+	users, total, err := suite.repo.Paginate(0, uint(limit))
+	suite.NotNil(err)
+	suite.Equal(uint(0), total)
+	suite.Equal(0, len(users))
+}
+
 func (suite *MySqlUserRepoTestSuite) TestShouldCreateNewUser() {
 	defer suite.db.Close()
 

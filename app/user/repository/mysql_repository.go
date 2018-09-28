@@ -6,7 +6,7 @@ import (
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/commons/format"
-	baseRepo "github.com/ramadani/go-api-skeleton/commons/repository"
+	"github.com/ramadani/go-api-skeleton/commons/sqlutils"
 )
 
 const (
@@ -26,7 +26,6 @@ const (
 
 // MySQLRepository of user repo
 type MySQLRepository struct {
-	baseRepo.SQLRepository
 	db *sql.DB
 }
 
@@ -69,7 +68,7 @@ func (repo *MySQLRepository) Create(name, email, password string) (uint, error) 
 	now := time.Now().Format(format.DateTimeToString)
 	res, err := tx.Exec(CreateQuery, name, email, password, now, now)
 
-	defer repo.DoTx(tx, err)
+	defer sqlutils.DoTx(tx, err)
 	if err != nil {
 		return 0, err
 	}
@@ -100,7 +99,7 @@ func (repo *MySQLRepository) Update(name string, id uint) error {
 
 	now := time.Now().Format(format.DateTimeToString)
 	_, err = tx.Exec(UpdateQuery, name, now, id)
-	defer repo.DoTx(tx, err)
+	defer sqlutils.DoTx(tx, err)
 
 	return err
 }
@@ -114,7 +113,7 @@ func (repo *MySQLRepository) Delete(id uint) error {
 
 	now := time.Now().Format(format.DateTimeToString)
 	_, err = tx.Exec(SoftDeleteQuery, now, id)
-	defer repo.DoTx(tx, err)
+	defer sqlutils.DoTx(tx, err)
 
 	return err
 }

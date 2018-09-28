@@ -11,12 +11,12 @@ type Response struct {
 }
 
 // ResponseData for json response data
-type responseData struct {
+type ResponseData struct {
 	Data interface{} `json:"data"`
 }
 
 // ResponseError for json response success
-type responseError struct {
+type ResponseError struct {
 	Message string `json:"message"`
 }
 
@@ -43,13 +43,13 @@ func (res *Response) Fail(msg string, statusCode int) {
 }
 
 // Data wrapper
-func Data(data interface{}) interface{} {
-	return responseData{data}
+func Data(data interface{}) ResponseData {
+	return ResponseData{data}
 }
 
 // Error wrapper
-func Error(data string) interface{} {
-	return responseError{data}
+func Error(data string) ResponseError {
+	return ResponseError{data}
 }
 
 // NewResponse instance
