@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase"
 	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
@@ -49,9 +50,11 @@ func (h *Handler) Store(w http.ResponseWriter, r *http.Request) {
 }
 
 // Find user by given id
-func (h *Handler) Find(w http.ResponseWriter, r *http.Request, id uint) {
+func (h *Handler) Find(w http.ResponseWriter, r *http.Request) {
 	res := res.NewResponse(w)
-	user, err := h.ucase.FindByID(id)
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	user, err := h.ucase.FindByID(uint(id))
 	if err != nil {
 		res.Fail(err.Error(), http.StatusNotFound)
 		return

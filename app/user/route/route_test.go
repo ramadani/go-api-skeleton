@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
+
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase/mocks"
@@ -157,10 +159,10 @@ func (suite *UserRouteTestSuite) TestFind() {
 	user := data.User{ID: id, Name: "FooBar", Email: "foo@example.com"}
 	ucase.On("FindByID", id).Return(user, nil).Once()
 
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handlers.Find(w, r, id)
-	})
-	handler.ServeHTTP(suite.rr, req)
+	router := mux.NewRouter()
+	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find)
+	router.ServeHTTP(suite.rr, req)
+
 	expectedBody, _ := json.Marshal(res.Data(user))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusOK, suite.rr.Code)
@@ -180,10 +182,10 @@ func (suite *UserRouteTestSuite) TestFindNotFound() {
 	findErr := errors.New("not found")
 	ucase.On("FindByID", id).Return(user, findErr).Once()
 
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handlers.Find(w, r, id)
-	})
-	handler.ServeHTTP(suite.rr, req)
+	router := mux.NewRouter()
+	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find)
+	router.ServeHTTP(suite.rr, req)
+
 	expectedBody, _ := json.Marshal(res.Data(res.Error(findErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusNotFound, suite.rr.Code)

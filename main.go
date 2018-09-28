@@ -16,7 +16,7 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	db, err := sql.Open("mysql", "root@root@tcp(127.0.0.1:3306)/go_api")
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/go_api")
 	if err != nil {
 		log.Fatal(err)
 	}
