@@ -54,7 +54,7 @@ func (h *Handler) Store(w http.ResponseWriter, r *http.Request) {
 	}
 
 	validator := validators.NewValidator()
-	if errs := validator.Store(input); len(errs) > 0 {
+	if errs := validator.Validate(input); len(errs) > 0 {
 		res.ValidationError(errs, http.StatusBadRequest)
 		return
 	}
@@ -76,6 +76,39 @@ func (h *Handler) Find(w http.ResponseWriter, r *http.Request) {
 	user, err := h.ucase.FindByID(uint(id))
 	if err != nil {
 		res.Fail(err.Error(), http.StatusNotFound)
+		return
+	}
+
+	res.JSON(user, http.StatusOK)
+}
+
+// Update an existing user
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	var input data.UserUpdateInput
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	res := res.NewResponse(w)
+	err := r.ParseForm()
+	if err != nil {
+		res.Fail(err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	decoder := schema.NewDecoder()
+	err = decoder.Decode(&input, r.PostForm)
+	if err != nil {
+		res.Fail(err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	validator := validators.NewValidator()
+	if errs := validator.Validate(input); len(errs) > 0 {
+		res.ValidationError(errs, http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.ucase.Update(input.Name, uint(id))
+	if err != nil {
+		res.Fail(err.Error(), http.StatusInternalServerError)
 		return
 	}
 

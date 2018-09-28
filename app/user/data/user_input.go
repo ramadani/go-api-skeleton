@@ -6,3 +6,8 @@ type UserInput struct {
 	Email    string `validate:"required,email"`
 	Password string `validate:"required"`
 }
+
+// UserUpdateInput for validate the input
+type UserUpdateInput struct {
+	Name string `validate:"required"`
+}

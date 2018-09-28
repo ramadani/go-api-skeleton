@@ -13,6 +13,6 @@ func TestStoreValidator(t *testing.T) {
 		Name: "Great",
 	}
 	validator := validators.NewValidator()
-	errs := validator.Store(user)
+	errs := validator.Validate(user)
 	assert.Equal(t, 2, len(errs))
 }

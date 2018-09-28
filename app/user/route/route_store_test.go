@@ -91,7 +91,7 @@ func (suite *UserRouteTestSuite) TestUserInputRequiredOnStore() {
 	router.HandleFunc("/users", handlers.Store).Methods(http.MethodPost)
 	router.ServeHTTP(suite.rr, req)
 
-	errs := validators.NewValidator().Store(data.UserInput{})
+	errs := validators.NewValidator().Validate(data.UserInput{})
 	expectedBody, _ := json.Marshal(res.Data(res.ValidationError(errs)))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusBadRequest, suite.rr.Code)
@@ -117,7 +117,7 @@ func (suite *UserRouteTestSuite) TestEmailMustValidOnStore() {
 	router.HandleFunc("/users", handlers.Store).Methods(http.MethodPost)
 	router.ServeHTTP(suite.rr, req)
 
-	errs := validators.NewValidator().Store(data.UserInput{Name: "FooBar", Email: "foo", Password: "secret"})
+	errs := validators.NewValidator().Validate(data.UserInput{Name: "FooBar", Email: "foo", Password: "secret"})
 	expectedBody, _ := json.Marshal(res.Data(res.ValidationError(errs)))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusBadRequest, suite.rr.Code)
