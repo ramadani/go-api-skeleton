@@ -5,7 +5,10 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
+	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase"
+	"github.com/ramadani/go-api-skeleton/app/user/validators"
 	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
 
@@ -35,12 +38,28 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 // Store a new user
 func (h *Handler) Store(w http.ResponseWriter, r *http.Request) {
+	var input data.UserInput
 	res := res.NewResponse(w)
-	name := r.FormValue("name")
-	email := r.FormValue("email")
-	password := r.FormValue("password")
+	err := r.ParseForm()
+	if err != nil {
+		res.Fail(err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	user, err := h.ucase.Create(name, email, password)
+	decoder := schema.NewDecoder()
+	err = decoder.Decode(&input, r.PostForm)
+	if err != nil {
+		res.Fail(err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	validator := validators.NewValidator()
+	if errs := validator.Store(input); len(errs) > 0 {
+		res.ValidationError(errs, http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.ucase.Create(input.Name, input.Email, input.Password)
 	if err != nil {
 		res.Fail(err.Error(), http.StatusInternalServerError)
 		return

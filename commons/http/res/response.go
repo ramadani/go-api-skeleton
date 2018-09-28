@@ -20,6 +20,12 @@ type ResponseError struct {
 	Message string `json:"message"`
 }
 
+// ResponseValidationError for json response success
+type ResponseValidationError struct {
+	Message string      `json:"message"`
+	Errors  interface{} `json:"errors"`
+}
+
 // JSON response
 func (res *Response) JSON(data interface{}, statusCode int) {
 	result, err := json.Marshal(Data(data))
@@ -36,6 +42,19 @@ func (res *Response) JSON(data interface{}, statusCode int) {
 // Fail response with json format
 func (res *Response) Fail(msg string, statusCode int) {
 	result, _ := json.Marshal(Data(Error(msg)))
+
+	res.w.Header().Set("Content-Type", "application/json")
+	res.w.WriteHeader(statusCode)
+	res.w.Write(result)
+}
+
+// ValidationError response with json format
+func (res *Response) ValidationError(errors interface{}, statusCode int) {
+	valErrors := ResponseValidationError{
+		Message: "validation_errors",
+		Errors:  errors,
+	}
+	result, _ := json.Marshal(Data(valErrors))
 
 	res.w.Header().Set("Content-Type", "application/json")
 	res.w.WriteHeader(statusCode)

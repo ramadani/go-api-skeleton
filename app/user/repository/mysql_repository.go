@@ -11,7 +11,7 @@ import (
 
 const (
 	// PaginateQuery get user paginate
-	PaginateQuery = `SELECT id, name, email FROM users WHERE deleted_at IS NULL OFFSET ? LIMIT ?`
+	PaginateQuery = `SELECT id, name, email FROM users WHERE deleted_at IS NULL LIMIT ? OFFSET ?`
 	// CountQuery get total of user
 	CountQuery = `SELECT COUNT(id) AS total FROM users WHERE deleted_at IS NULL`
 	// CreateQuery to create a new user query
@@ -35,7 +35,7 @@ func (repo *MySQLRepository) Paginate(offset, limit uint) ([]data.User, uint, er
 	var total uint
 
 	// get users by given query
-	userRows, err := repo.db.Query(PaginateQuery, offset, limit)
+	userRows, err := repo.db.Query(PaginateQuery, limit, offset)
 	if err != nil {
 		return users, total, err
 	}
