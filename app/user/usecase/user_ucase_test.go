@@ -41,7 +41,7 @@ func (suite *UserUsecaseTestSuite) TestPaginate() {
 		}
 	}
 
-	repo.On("Paginate", offset, limit).Return(users, limit, nil).Once()
+	repo.On("Paginate", limit, offset).Return(users, limit, nil).Once()
 
 	userPaginate, err := suite.usecase.Paginate(page, limit)
 	suite.Equal(users, userPaginate.Data)

@@ -66,13 +66,13 @@ func (_m *Repository) FindByID(id uint) (data.User, error) {
 	return r0, r1
 }
 
-// Paginate provides a mock function with given fields: offset, limit
-func (_m *Repository) Paginate(offset uint, limit uint) ([]data.User, uint, error) {
-	ret := _m.Called(offset, limit)
+// Paginate provides a mock function with given fields: limit, offset
+func (_m *Repository) Paginate(limit uint, offset uint) ([]data.User, uint, error) {
+	ret := _m.Called(limit, offset)
 
 	var r0 []data.User
 	if rf, ok := ret.Get(0).(func(uint, uint) []data.User); ok {
-		r0 = rf(offset, limit)
+		r0 = rf(limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]data.User)
@@ -81,14 +81,14 @@ func (_m *Repository) Paginate(offset uint, limit uint) ([]data.User, uint, erro
 
 	var r1 uint
 	if rf, ok := ret.Get(1).(func(uint, uint) uint); ok {
-		r1 = rf(offset, limit)
+		r1 = rf(limit, offset)
 	} else {
 		r1 = ret.Get(1).(uint)
 	}
 
 	var r2 error
 	if rf, ok := ret.Get(2).(func(uint, uint) error); ok {
-		r2 = rf(offset, limit)
+		r2 = rf(limit, offset)
 	} else {
 		r2 = ret.Error(2)
 	}
