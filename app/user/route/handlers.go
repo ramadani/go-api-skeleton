@@ -65,7 +65,7 @@ func (h *Handler) Store(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res.JSON(user, http.StatusOK)
+	res.JSON(user, http.StatusCreated)
 }
 
 // Find user by given id

@@ -16,7 +16,7 @@ type UserUsecase struct {
 func (ucase *UserUsecase) Paginate(page, limit uint) (data.UserPaginate, error) {
 	offset := (page - 1) * limit
 	users, total, err := ucase.repo.Paginate(limit, offset)
-	pages := math.Ceil(float64(total / limit))
+	pages := math.Ceil(float64(total) / float64(limit))
 
 	userPaginate := data.UserPaginate{
 		Data:    users,

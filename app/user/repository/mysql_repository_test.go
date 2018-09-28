@@ -204,7 +204,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldDeleteUser() {
 
 	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectBegin()
-	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.)`).
+	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.) AND deleted_at IS NULL`).
 		WithArgs(now, 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.mock.ExpectCommit()
@@ -221,7 +221,7 @@ func (suite *MySqlUserRepoTestSuite) TestShouldRollbackDeleteUserOnFailure() {
 
 	now := time.Now().UTC().Format(format.DateTimeToString)
 	suite.mock.ExpectBegin()
-	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.)`).
+	suite.mock.ExpectExec(`UPDATE users SET deleted_at = (.) WHERE id = (.) AND deleted_at IS NULL`).
 		WithArgs(now, 1).
 		WillReturnError(fmt.Errorf("some error"))
 	suite.mock.ExpectRollback()

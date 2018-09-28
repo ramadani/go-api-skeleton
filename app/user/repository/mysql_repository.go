@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
@@ -21,7 +22,7 @@ const (
 	// UpdateQuery to update an existing user
 	UpdateQuery = `UPDATE users SET name = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`
 	// SoftDeleteQuery to delete an existing user
-	SoftDeleteQuery = `UPDATE users SET deleted_at = ? WHERE id = ?`
+	SoftDeleteQuery = `UPDATE users SET deleted_at = ? WHERE id = ? AND deleted_at IS NULL`
 )
 
 // MySQLRepository of user repo
@@ -112,8 +113,14 @@ func (repo *MySQLRepository) Delete(id uint) error {
 	}
 
 	now := time.Now().UTC().Format(format.DateTimeToString)
-	_, err = tx.Exec(SoftDeleteQuery, now, id)
+	res, err := tx.Exec(SoftDeleteQuery, now, id)
 	defer sqlutils.DoTx(tx, err)
+
+	if res != nil {
+		if affected, _ := res.RowsAffected(); affected == 0 {
+			return errors.New("no found")
+		}
+	}
 
 	return err
 }

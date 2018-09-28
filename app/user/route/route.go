@@ -19,5 +19,6 @@ func New(router *mux.Router, db *sql.DB) {
 	router.HandleFunc("/users", handler.Index).Methods(http.MethodGet)
 	router.HandleFunc("/users", handler.Store).Methods(http.MethodPost)
 	router.HandleFunc("/users/{id:[0-9]+}", handler.Find).Methods(http.MethodGet)
-	router.HandleFunc("/users/{id:[0-9]+}", handler.Find).Methods(http.MethodPut)
+	router.HandleFunc("/users/{id:[0-9]+}", handler.Update).Methods(http.MethodPut)
+	router.HandleFunc("/users/{id:[0-9]+}", handler.Delete).Methods(http.MethodDelete)
 }

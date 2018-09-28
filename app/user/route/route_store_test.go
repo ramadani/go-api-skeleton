@@ -42,7 +42,7 @@ func (suite *UserRouteTestSuite) TestStore() {
 
 	expectedBody, _ := json.Marshal(res.Data(user))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
-	suite.Equal(http.StatusOK, suite.rr.Code)
+	suite.Equal(http.StatusCreated, suite.rr.Code)
 }
 
 func (suite *UserRouteTestSuite) TestStoreFailed() {
