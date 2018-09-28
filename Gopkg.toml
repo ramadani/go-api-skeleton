@@ -64,3 +64,11 @@
 [[constraint]]
   name = "github.com/go-sql-driver/mysql"
   version = "1.4.0"
+
+[[constraint]]
+  name = "gopkg.in/go-playground/validator.v9"
+  version = "9.21.0"
+
+[[constraint]]
+  name = "github.com/gorilla/schema"
+  version = "1.0.2"

@@ -160,7 +160,7 @@ func (suite *UserRouteTestSuite) TestFind() {
 	ucase.On("FindByID", id).Return(user, nil).Once()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find)
+	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find).Methods(http.MethodGet)
 	router.ServeHTTP(suite.rr, req)
 
 	expectedBody, _ := json.Marshal(res.Data(user))
@@ -183,7 +183,7 @@ func (suite *UserRouteTestSuite) TestFindNotFound() {
 	ucase.On("FindByID", id).Return(user, findErr).Once()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find)
+	router.HandleFunc("/users/{id:[0-9]+}", handlers.Find).Methods(http.MethodGet)
 	router.ServeHTTP(suite.rr, req)
 
 	expectedBody, _ := json.Marshal(res.Data(res.Error(findErr.Error())))
