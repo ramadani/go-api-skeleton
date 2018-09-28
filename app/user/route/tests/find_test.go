@@ -9,7 +9,7 @@ import (
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase/mocks"
-	hl "github.com/ramadani/go-api-skeleton/commons/handler"
+	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
 
 func (suite *UserRouteTestSuite) TestFind() {
@@ -29,7 +29,7 @@ func (suite *UserRouteTestSuite) TestFind() {
 		handlers.Find(w, r, id)
 	})
 	handler.ServeHTTP(suite.rr, req)
-	expectedBody, _ := json.Marshal(hl.ResponseData{Data: user})
+	expectedBody, _ := json.Marshal(res.Data(user))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusOK, suite.rr.Code)
 }
@@ -52,9 +52,7 @@ func (suite *UserRouteTestSuite) TestFindNotFound() {
 		handlers.Find(w, r, id)
 	})
 	handler.ServeHTTP(suite.rr, req)
-	expectedBody, _ := json.Marshal(hl.ResponseData{
-		Data: hl.ResponseError{Message: findErr.Error()},
-	})
+	expectedBody, _ := json.Marshal(res.Data(res.Error(findErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusNotFound, suite.rr.Code)
 }

@@ -2,13 +2,14 @@ package tests
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase/mocks"
-	hl "github.com/ramadani/go-api-skeleton/commons/handler"
+	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
 
 func (suite *UserRouteTestSuite) TestIndexRoute() {
@@ -47,7 +48,7 @@ func (suite *UserRouteTestSuite) TestIndexRoute() {
 
 	handler := http.HandlerFunc(handlers.Index)
 	handler.ServeHTTP(suite.rr, req)
-	exceptedBody, _ := json.Marshal(hl.ResponseData{Data: userPaginate})
+	exceptedBody, _ := json.Marshal(res.Data(userPaginate))
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusOK, suite.rr.Code)
 }
@@ -65,12 +66,12 @@ func (suite *UserRouteTestSuite) TestIndexRouteOnFailed() {
 	req, err := http.NewRequest(http.MethodGet, "/users", nil)
 	suite.Nil(err)
 
-	ucase.On("Paginate", page, limit).Return(data.UserPaginate{}, fmt.Errorf("internal server error")).Once()
-	resErr := hl.ResponseError{Message: "internal server error"}
+	indexErr := errors.New("internal server error")
+	ucase.On("Paginate", page, limit).Return(data.UserPaginate{}, indexErr).Once()
 
 	handler := http.HandlerFunc(handlers.Index)
 	handler.ServeHTTP(suite.rr, req)
-	exceptedBody, _ := json.Marshal(hl.ResponseData{Data: resErr})
+	exceptedBody, _ := json.Marshal(res.Data(res.Error(indexErr.Error())))
 	suite.Equal(string(exceptedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
 }

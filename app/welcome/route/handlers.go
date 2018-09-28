@@ -3,13 +3,11 @@ package route
 import (
 	"net/http"
 
-	"github.com/ramadani/go-api-skeleton/commons/handler"
+	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
 
 // Handler of welcome routes
-type Handler struct {
-	handler.Handler
-}
+type Handler struct{}
 
 type welcome struct {
 	Name        string `json:"name"`
@@ -19,13 +17,14 @@ type welcome struct {
 
 // Index handler
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
+	res := res.NewResponse(w)
 	welcome := welcome{
 		"Go API Skeleton",
 		"Go (Golang) API Skeleton for your great API",
 		"v0.1.0",
 	}
 
-	h.Response.JSON(w, welcome, http.StatusOK)
+	res.JSON(welcome, http.StatusOK)
 }
 
 // NewHandler welcome handler

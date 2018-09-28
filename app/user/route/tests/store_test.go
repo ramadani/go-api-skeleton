@@ -11,7 +11,7 @@ import (
 	"github.com/ramadani/go-api-skeleton/app/user/data"
 	"github.com/ramadani/go-api-skeleton/app/user/route"
 	"github.com/ramadani/go-api-skeleton/app/user/usecase/mocks"
-	hl "github.com/ramadani/go-api-skeleton/commons/handler"
+	"github.com/ramadani/go-api-skeleton/commons/http/res"
 )
 
 func (suite *UserRouteTestSuite) TestStore() {
@@ -35,7 +35,7 @@ func (suite *UserRouteTestSuite) TestStore() {
 
 	handler := http.HandlerFunc(handlers.Store)
 	handler.ServeHTTP(suite.rr, req)
-	expectedBody, _ := json.Marshal(hl.ResponseData{Data: user})
+	expectedBody, _ := json.Marshal(res.Data(user))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusOK, suite.rr.Code)
 }
@@ -62,7 +62,7 @@ func (suite *UserRouteTestSuite) TestStoreFailed() {
 
 	handler := http.HandlerFunc(handlers.Store)
 	handler.ServeHTTP(suite.rr, req)
-	expectedBody, _ := json.Marshal(hl.ResponseData{Data: hl.ResponseError{Message: createErr.Error()}})
+	expectedBody, _ := json.Marshal(res.Data(res.Error(createErr.Error())))
 	suite.Equal(string(expectedBody), suite.rr.Body.String())
 	suite.Equal(http.StatusInternalServerError, suite.rr.Code)
 }

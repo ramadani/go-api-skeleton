@@ -20,16 +20,6 @@ type responseError struct {
 	Message string `json:"message"`
 }
 
-// Data wrapper
-func Data(data interface{}) interface{} {
-	return responseData{data}
-}
-
-// Error wrapper
-func Error(data string) interface{} {
-	return responseError{data}
-}
-
 // JSON response
 func (res *Response) JSON(data interface{}, statusCode int) {
 	result, err := json.Marshal(Data(data))
@@ -50,4 +40,19 @@ func (res *Response) Fail(msg string, statusCode int) {
 	res.w.Header().Set("Content-Type", "application/json")
 	res.w.WriteHeader(statusCode)
 	res.w.Write(result)
+}
+
+// Data wrapper
+func Data(data interface{}) interface{} {
+	return responseData{data}
+}
+
+// Error wrapper
+func Error(data string) interface{} {
+	return responseError{data}
+}
+
+// NewResponse instance
+func NewResponse(w http.ResponseWriter) *Response {
+	return &Response{w}
 }
