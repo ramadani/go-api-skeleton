@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"net/http"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -15,6 +16,8 @@ import (
 )
 
 func main() {
+	var handler http.Handler
+
 	r := mux.NewRouter()
 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/go_api")
 	if err != nil {
@@ -27,9 +30,10 @@ func main() {
 	welcomeRoute.New(r)
 	userRoute.New(r, db)
 
-	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
-	compressedRouter := handlers.CompressHandler(loggedRouter)
+	handler = r
+	handler = handlers.LoggingHandler(os.Stdout, handler)
+	handler = handlers.CompressHandler(handler)
 
-	app := bootstrap.New(compressedRouter)
+	app := bootstrap.New(handler)
 	app.Run(3000)
 }
