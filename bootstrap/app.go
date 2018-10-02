@@ -2,72 +2,62 @@ package bootstrap
 
 import (
 	"context"
+	"flag"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
-
-	"github.com/ramadani/go-api-skeleton/config"
-
-	"github.com/labstack/echo"
-	"github.com/labstack/gommon/log"
 )
 
-// App contains the libraries that can be used in the app.
-type App struct {
-	e         *echo.Echo
-	cog       *config.Config
-	bootables []Bootable
+type app struct {
+	handler http.Handler
 }
 
-// AddBootable to run the boot on startup
-func (app *App) AddBootable(bootable Bootable) {
-	app.bootables = append(app.bootables, bootable)
-}
+func (app *app) Run(port int32) {
+	var wait time.Duration
+	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
+	flag.Parse()
 
-// Run and serve the app.
-func (app *App) Run() {
-	app.boot()
-	app.serve()
-	app.shutdown()
-}
-
-// boot is to use execute the bootables code before their run.
-func (app *App) boot() {
-	for _, bootable := range app.bootables {
-		bootable.Boot()
+	srv := &http.Server{
+		Addr: fmt.Sprintf("0.0.0.0:%d", port),
+		// Good practice to set timeouts to avoid Slowloris attacks.
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+		Handler:      app.handler,
 	}
-}
 
-func (app *App) serve() {
-	port := app.cog.GetInt("app.port")
-	isDebug := app.cog.GetBool("app.debug")
-
-	app.e.Logger.SetLevel(log.DEBUG)
-	app.e.HideBanner = !isDebug
-	app.e.Debug = isDebug
-
+	// Run our server in a goroutine so that it doesn't block.
 	go func() {
-		if err := app.e.Start(fmt.Sprintf(":%d", port)); err != nil {
-			app.e.Logger.Info("Shutting down the server")
+		if err := srv.ListenAndServe(); err != nil {
+			log.Println(err)
 		}
 	}()
-}
 
-func (app *App) shutdown() {
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 10 seconds.
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	c := make(chan os.Signal, 1)
+	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
+	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
+	signal.Notify(c, os.Interrupt)
+
+	// Block until we receive our signal.
+	<-c
+
+	// Create a deadline to wait for.
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
-	if err := app.e.Shutdown(ctx); err != nil {
-		app.e.Logger.Fatal(err)
-	}
+	// Doesn't block if no connections, but will otherwise wait
+	// until the timeout deadline.
+	srv.Shutdown(ctx)
+	// Optionally, you could run srv.Shutdown in a goroutine and block on
+	// <-ctx.Done() if your application should wait for other services
+	// to finalize based on context cancellation.
+	log.Println("shutting down")
+	os.Exit(0)
 }
 
-// New returns app.
-func New(e *echo.Echo, cog *config.Config) *App {
-	return &App{e, cog, []Bootable{}}
+// New app
+func New(handler http.Handler) *app {
+	return &app{handler}
 }

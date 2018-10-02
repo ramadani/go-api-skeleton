@@ -48,3 +48,27 @@
 [[constraint]]
   name = "github.com/stretchr/testify"
   version = "1.2.2"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+  version = "1.6.2"
+
+[[constraint]]
+  name = "github.com/gorilla/handlers"
+  version = "1.4.0"
+
+[[constraint]]
+  name = "gopkg.in/DATA-DOG/go-sqlmock.v1"
+  version = "1.3.0"
+
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+  version = "1.4.0"
+
+[[constraint]]
+  name = "gopkg.in/go-playground/validator.v9"
+  version = "9.21.0"
+
+[[constraint]]
+  name = "github.com/gorilla/schema"
+  version = "1.0.2"
