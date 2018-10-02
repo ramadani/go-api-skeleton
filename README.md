@@ -10,12 +10,10 @@ Go Api Skeleton
 ## Installation
 
 - Clone this repository
-- Run `dep ensure` to install the dependencies
-- Copy `env.example.yml` and then paste it to `env.yml`, change the values as needed
+- Run `dep ensure` to install the dependencies the values as needed
 
 ## Ingredients
 
-- [echo](https://github.com/labstack/echo)
-- [viper](https://github.com/spf13/viper)
-- [gorm](https://github.com/jinzhu/gorm)
-- [jwt-go](https://github.com/dgrijalva/jwt-go)
+- [gorilla mux](http://www.gorillatoolkit.org/pkg/mux)
+- [gorilla schema](http://www.gorillatoolkit.org/pkg/schema)
+- [gorilla handlers](http://www.gorillatoolkit.org/pkg/handlers)
